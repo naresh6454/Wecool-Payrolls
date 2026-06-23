@@ -7,12 +7,12 @@ async function main() {
   console.log("🌱 Seeding database...");
 
   // Create HR user
-  const hrHash = await bcrypt.hash("hr123456", 12);
+  const hrHash = await bcrypt.hash("Chandru@4252", 12);
   const hr = await prisma.user.upsert({
-    where: { email: "hr@wecool.com" },
+    where: { email: "hr@wecoolimports.com" },
     update: {},
     create: {
-      email: "hr@wecool.com",
+      email: "hr@wecoolimports.com",
       passwordHash: hrHash,
       role: "HR",
       status: "APPROVED",
@@ -157,7 +157,7 @@ async function main() {
   }
 
   console.log("✅ Seed complete!");
-  console.log("   HR:       hr@wecool.com / hr123456");
+  console.log("   HR:       hr@wecoolimports.com / Chandru@4252");
   console.log("   Employee: emp@wecool.com / emp123456");
 }
 
