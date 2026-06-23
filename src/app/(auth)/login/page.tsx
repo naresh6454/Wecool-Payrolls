@@ -132,11 +132,6 @@ export default function LoginPage() {
             </Link>
           </p>
 
-          <div className="mt-8 p-4 bg-amber-50 border border-amber-200 rounded-xl">
-            <p className="text-xs font-semibold text-amber-700 mb-1">Demo Credentials</p>
-            <p className="text-xs text-amber-600">HR: hr@wecool.com / hr123456</p>
-            <p className="text-xs text-amber-600">Employee: emp@wecool.com / emp123456</p>
-          </div>
         </div>
       </div>
     </div>
