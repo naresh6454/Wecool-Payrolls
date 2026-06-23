@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ["pdfkit", "@libsql/client", "@prisma/adapter-libsql"],
+  serverExternalPackages: ["pdfkit"],
   compress: true,
   poweredByHeader: false,
   experimental: {
