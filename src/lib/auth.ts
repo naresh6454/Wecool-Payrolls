@@ -57,7 +57,7 @@ export function setAuthCookie(token: string): object {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax" as const,
-    maxAge: 60 * 60 * 24 * 7,
+    // No maxAge = session cookie: deleted when browser is closed
     path: "/",
   };
 }

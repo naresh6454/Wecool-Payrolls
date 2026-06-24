@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getAuthUser } from "@/lib/auth";
 import Sidebar from "@/components/layout/Sidebar";
+import InactivityLogout from "@/components/InactivityLogout";
 import { prisma } from "@/lib/prisma";
 
 export default async function EmployeeLayout({ children }: { children: React.ReactNode }) {
@@ -20,6 +21,7 @@ export default async function EmployeeLayout({ children }: { children: React.Rea
   return (
     <div className="flex min-h-screen bg-[#F7F6F3]">
       <Sidebar role="EMPLOYEE" userName={name} userEmail={user.email} notifCount={notifCount} />
+      <InactivityLogout />
       <main className="flex-1 lg:ml-56 min-h-screen pt-14 lg:pt-0 overflow-x-hidden">
         <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">{children}</div>
       </main>
