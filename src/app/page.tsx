@@ -94,9 +94,8 @@ export default async function RootPage() {
                     <div className="w-3 h-3 rounded-full bg-yellow-400"/>
                     <div className="w-3 h-3 rounded-full bg-green-400"/>
                   </div>
-                  <div className="flex-1 mx-3 bg-white rounded-md px-3 py-1 text-xs text-gray-400 border border-gray-200 flex items-center justify-between">
-                    <span>wecoolpayroll.co.in/hr/payroll</span>
-                    <span className="text-[10px] text-orange-400 font-semibold ml-2 whitespace-nowrap">✦ Created by Naresh</span>
+                  <div className="flex-1 mx-3 bg-white rounded-md px-3 py-1 text-xs text-gray-400 border border-gray-200">
+                    wecoolpayroll.co.in/hr/payroll
                   </div>
                 </div>
                 {/* Dashboard content */}
@@ -122,22 +121,24 @@ export default async function RootPage() {
                     </div>
                     {/* Table rows */}
                     {[
-                      { name: "Arjun Kumar", dept: "Engineering", days: "21", net: "₹61,299", status: "approved", color: "bg-green-100 text-green-700" },
-                      { name: "Priya Sharma", dept: "HR", days: "20", net: "₹48,750", status: "approved", color: "bg-green-100 text-green-700" },
-                      { name: "Rahul Mehta", dept: "Finance", days: "19", net: "₹54,200", status: "review", color: "bg-orange-100 text-orange-700" },
-                      { name: "Sneha Patel", dept: "Design", days: "21", net: "₹42,500", status: "approved", color: "bg-green-100 text-green-700" },
+                      { name: "Arjun Kumar", dept: "Engineering", days: "21", net: "₹61,299", status: "Approved", color: "bg-green-100 text-green-700" },
+                      { name: "Priya Sharma", dept: "HR", days: "20", net: "₹48,750", status: "Approved", color: "bg-green-100 text-green-700" },
+                      { name: "Rahul Mehta", dept: "Finance", days: "19", net: "₹54,200", status: "Review", color: "bg-orange-100 text-orange-700" },
+                      { name: "Sneha Patel", dept: "Design", days: "21", net: "₹42,500", status: "Approved", color: "bg-green-100 text-green-700" },
                     ].map((row, i) => (
-                      <div key={row.name} className={`px-3 py-2 flex items-center gap-2 text-[10px] border-b border-gray-50 ${i % 2 === 1 ? "bg-gray-50/50" : "bg-white"}`}>
+                      <div key={row.name} className={`px-3 py-2 flex items-center text-[10px] border-b border-gray-50 ${i % 2 === 1 ? "bg-gray-50/50" : "bg-white"}`}>
                         <div className="w-6 h-6 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-[8px] flex-shrink-0">
                           {row.name[0]}
                         </div>
-                        <div className="flex-1 min-w-0">
+                        <div className="w-28 pl-2">
                           <p className="text-gray-800 font-semibold truncate">{row.name}</p>
                           <p className="text-gray-400">{row.dept}</p>
                         </div>
-                        <div className="text-gray-500 w-8 text-center">{row.days}d</div>
-                        <div className="text-gray-900 font-bold w-14 text-right">{row.net}</div>
-                        <span className={`${row.color} text-[8px] font-bold px-1.5 py-0.5 rounded-full capitalize`}>{row.status}</span>
+                        <div className="w-8 text-center text-gray-500">{row.days}d</div>
+                        <div className="w-16 text-right text-gray-900 font-bold">{row.net}</div>
+                        <div className="flex-1 flex justify-end">
+                          <span className={`${row.color} text-[8px] font-bold px-2 py-0.5 rounded-full`}>{row.status}</span>
+                        </div>
                       </div>
                     ))}
                   </div>
