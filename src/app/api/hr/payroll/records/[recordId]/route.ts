@@ -107,7 +107,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ re
       grossEarnings: Number(updated.grossEarnings),
       netSalary: Number(updated.netSalary),
     });
-  } catch {
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  } catch (e) {
+    console.error("PATCH payroll record error:", e);
+    return NextResponse.json({ error: e instanceof Error ? e.message : "Server error" }, { status: 500 });
   }
 }

@@ -115,15 +115,15 @@ export default function PayrollReviewPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
+    const data = await res.json();
     if (res.ok) {
-      const data = await res.json();
       setRun(prev => prev ? {
         ...prev,
         payrollRecords: prev.payrollRecords.map(r => r.id === recordId ? { ...r, ...data } : r),
       } : prev);
       toast.success("Record updated");
     } else {
-      toast.error("Failed to save changes");
+      toast.error(data.error || "Failed to save changes");
     }
   };
 

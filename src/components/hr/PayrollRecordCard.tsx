@@ -76,9 +76,12 @@ export default function PayrollRecordCard({
   const isWarehouse = rec.employee.employeeType === "WAREHOUSE";
   const otTotal = (parseFloat(ot.days || "0") || 0) * (parseFloat(ot.rate || "0") || 0);
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [editSaving, setEditSaving] = useState(false);
-  const [fields, setFields] = useState<EditFields>({
+  const perDay = Number(rec.perDaySalary) || (Number(rec.monthlySalary) / 26);
+  // settings assumed from record (professional tax is fixed)
+  const LATE_FREE = 3;
+  const LATE_PER_HALF = 2;
+
+  const initFields = (): EditFields => ({
     basicSalary: String(Number(rec.basicSalary)),
     hra: String(Number(rec.hra)),
     conveyance: String(Number(rec.conveyance)),
@@ -93,22 +96,21 @@ export default function PayrollRecordCard({
     lateCount: String(Number(rec.lateCount)),
   });
 
+  const [isEditing, setIsEditing] = useState(false);
+  const [editSaving, setEditSaving] = useState(false);
+  const [fields, setFields] = useState<EditFields>(initFields);
+
+  // Derived live calculations shown during edit
+  const liveGross = (parseFloat(fields.basicSalary) || 0) + (parseFloat(fields.hra) || 0) +
+    (parseFloat(fields.conveyance) || 0) + (parseFloat(fields.bonus) || 0) +
+    (parseFloat(fields.specialAllowance) || 0) + (parseFloat(fields.overtimeAmount) || 0);
+  const liveDed = (parseFloat(fields.professionalTax) || 0) + (parseFloat(fields.lopDeduction) || 0) +
+    (parseFloat(fields.lateDeduction) || 0);
+  const liveNet = Math.max(0, liveGross - liveDed);
+
   const startEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setFields({
-      basicSalary: String(Number(rec.basicSalary)),
-      hra: String(Number(rec.hra)),
-      conveyance: String(Number(rec.conveyance)),
-      bonus: String(Number(rec.bonus)),
-      specialAllowance: String(Number(rec.specialAllowance)),
-      overtimeAmount: String(Number(rec.overtimeAmount)),
-      professionalTax: String(Number(rec.professionalTax)),
-      lopDeduction: String(Number(rec.lopDeduction)),
-      lateDeduction: String(Number(rec.lateDeduction)),
-      presentDays: String(Number(rec.presentDays)),
-      lopDays: String(Number(rec.lopDays)),
-      lateCount: String(Number(rec.lateCount)),
-    });
+    setFields(initFields());
     setIsEditing(true);
   };
 
@@ -119,8 +121,25 @@ export default function PayrollRecordCard({
     setIsEditing(false);
   };
 
-  const f = (key: keyof EditFields) => (e: React.ChangeEvent<HTMLInputElement>) =>
-    setFields(p => ({ ...p, [key]: e.target.value }));
+  const f = (key: keyof EditFields) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setFields(prev => {
+      const next = { ...prev, [key]: val };
+      // Auto-recalculate LOP deduction when lopDays changes
+      if (key === "lopDays") {
+        const lop = parseFloat(val) || 0;
+        next.lopDeduction = String(Math.round(lop * perDay * 100) / 100);
+      }
+      // Auto-recalculate late deduction when lateCount changes
+      if (key === "lateCount") {
+        const late = parseFloat(val) || 0;
+        const billableLates = Math.max(0, late - LATE_FREE);
+        const halfDays = Math.floor(billableLates / LATE_PER_HALF);
+        next.lateDeduction = String(Math.round(halfDays * perDay * 0.5 * 100) / 100);
+      }
+      return next;
+    });
+  };
 
   const editInput = (key: keyof EditFields, placeholder?: string) => (
     <input
@@ -230,7 +249,7 @@ export default function PayrollRecordCard({
                   ))}
                   <div className="flex justify-between pt-1 border-t border-stone-100 font-bold">
                     <span className="text-stone-700">Gross</span>
-                    <span className="text-stone-900">₹{fmt(rec.grossEarnings)}</span>
+                    <span className="text-stone-900">₹{fmt(isEditing ? liveGross : rec.grossEarnings)}</span>
                   </div>
                 </div>
               </div>
@@ -283,7 +302,7 @@ export default function PayrollRecordCard({
                   )}
                   <div className="flex justify-between pt-1 border-t border-stone-100 font-bold">
                     <span className="text-green-700">Net Pay</span>
-                    <span className="text-green-600">₹{fmt(rec.netSalary)}</span>
+                    <span className="text-green-600">₹{fmt(isEditing ? liveNet : rec.netSalary)}</span>
                   </div>
                 </div>
               </div>
