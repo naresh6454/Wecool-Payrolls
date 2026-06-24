@@ -41,19 +41,20 @@ export default async function AuditPage() {
           {logs.length === 0 ? (
             <div className="px-6 py-12 text-center text-stone-400">No audit logs yet</div>
           ) : logs.map((log) => (
-            <div key={log.id} className="flex items-start gap-4 px-6 py-3 hover:bg-stone-50 transition-all">
-              <div className="flex-shrink-0 w-36 pt-0.5">
+            <div key={log.id} className="flex items-start gap-3 px-4 sm:px-6 py-3 hover:bg-stone-50 transition-all">
+              <div className="flex-shrink-0 pt-0.5 hidden sm:block w-32">
                 <p className="text-xs text-stone-400">{format(log.createdAt, "MMM d, h:mm a")}</p>
               </div>
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${actionColors[log.action] || "bg-stone-100 text-stone-600"}`}>
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-semibold flex-shrink-0 ${actionColors[log.action] || "bg-stone-100 text-stone-600"}`}>
                     {log.action.replace(/_/g, " ")}
                   </span>
-                  <span className="text-sm text-stone-700">{log.description}</span>
+                  <span className="text-sm text-stone-700 truncate">{log.description}</span>
                 </div>
-                <div className="flex items-center gap-2 mt-0.5 text-xs text-stone-400">
-                  <span>{log.actor?.email || "System"}</span>
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-0 mt-0.5 text-xs text-stone-400">
+                  <span className="sm:hidden">{format(log.createdAt, "MMM d, h:mm a")} ·</span>
+                  <span className="truncate">{log.actor?.email || "System"}</span>
                   <span>·</span>
                   <span>{log.actorRole}</span>
                   <span>·</span>

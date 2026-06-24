@@ -93,7 +93,7 @@ export default async function EmployeeDetailPage({ params }: { params: Promise<{
             ].map(({ label, value }) => (
               <div key={label} className="flex justify-between items-start py-1 border-b border-stone-50 last:border-0">
                 <span className="text-xs font-semibold text-stone-400">{label}</span>
-                <span className="text-sm font-medium text-stone-800 text-right max-w-48">{value}</span>
+                <span className="text-sm font-medium text-stone-800 text-right max-w-[10rem] sm:max-w-xs break-words">{value}</span>
               </div>
             ))}
           </div>
@@ -149,7 +149,7 @@ export default async function EmployeeDetailPage({ params }: { params: Promise<{
         </div>
 
         {/* Payroll History */}
-        <Card className="col-span-2">
+        <Card className="lg:col-span-2">
           <CardHeader title="Payroll History" subtitle="Last 6 payroll records" />
           {employee.payrollRecords.length === 0 ? (
             <div className="px-6 py-10 text-center text-stone-400 text-sm">No payroll records yet</div>

@@ -82,7 +82,7 @@ export default async function HRDashboard() {
           <CardBody>
             {latestPayrollRun ? (
               <>
-                <div className="flex items-center gap-1 mb-5">
+                <div className="flex items-center gap-1 mb-5 overflow-x-auto pb-1">
                   {payrollSteps.map((step, i) => {
                     const done = i < currentStep;
                     const active = i === currentStep;
@@ -165,7 +165,7 @@ export default async function HRDashboard() {
               <div className="px-6 py-8 text-center text-stone-400 text-sm">No registrations yet</div>
             ) : (
               recentRegistrations.map((u) => (
-                <div key={u.id} className="flex items-center gap-3 px-6 py-3 hover:bg-stone-50 transition-all">
+                <div key={u.id} className="flex items-center gap-3 px-4 sm:px-6 py-3 hover:bg-stone-50 transition-all">
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                     {u.employee?.firstName.charAt(0)}
                   </div>

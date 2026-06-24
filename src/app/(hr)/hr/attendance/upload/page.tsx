@@ -30,7 +30,7 @@ export default async function AttendanceUploadPage() {
                 <div className="flex items-start justify-between mb-1">
                   <div>
                     <p className="text-sm font-semibold text-stone-900">{u.payrollMonth}</p>
-                    <p className="text-xs text-stone-400 mt-0.5 truncate max-w-[200px]">{u.fileName}</p>
+                    <p className="text-xs text-stone-400 mt-0.5 truncate max-w-[160px] sm:max-w-xs">{u.fileName}</p>
                   </div>
                   <Badge variant={
                     u.status === "PROCESSED" ? "green"

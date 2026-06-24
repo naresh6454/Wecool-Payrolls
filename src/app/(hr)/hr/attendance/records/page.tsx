@@ -64,16 +64,14 @@ export default async function AttendanceRecordsPage() {
                 u.status === "INVALID" ? "red" :
                 u.status === "VALIDATING" ? "amber" : "gray";
               return (
-                <div key={u.id} className="flex items-center gap-4 px-6 py-3 hover:bg-stone-50 transition-all">
+                <div key={u.id} className="flex items-center gap-3 px-4 sm:px-6 py-3 hover:bg-stone-50 transition-all">
                   <div className="w-9 h-9 rounded-xl bg-orange-100 flex items-center justify-center flex-shrink-0">
                     <CalendarCheck className="w-4 h-4 text-orange-500" />
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-stone-900">{u.payrollMonth}</p>
-                    <p className="text-xs text-stone-400">
-                      {u.fileName} · {format(new Date(u.createdAt), "MMM d, yyyy h:mm a")}
-                      <span className="mx-1">·</span>
-                      {u.validRecords}/{u.totalRecords} valid records
+                    <p className="text-xs text-stone-400 truncate">
+                      {u.validRecords}/{u.totalRecords} valid · {format(new Date(u.createdAt), "MMM d, yyyy")}
                     </p>
                   </div>
                   <Badge variant={variant}>{u.status}</Badge>

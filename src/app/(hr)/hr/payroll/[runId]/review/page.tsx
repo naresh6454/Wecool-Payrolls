@@ -166,7 +166,7 @@ export default function PayrollReviewPage() {
         title={`Review Payroll — ${run.payrollMonth}`}
         subtitle={`${format(new Date(run.periodStart), "MMM d")} – ${format(new Date(run.periodEnd), "MMM d, yyyy")} · ${run.totalEmployees} employees`}
         actions={
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button onClick={recalculate} disabled={recalculating} className="bg-stone-700 hover:bg-stone-800 text-white">
               {recalculating ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
               Recalculate
