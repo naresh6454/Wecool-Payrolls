@@ -21,8 +21,8 @@ export default async function RootPage() {
       <nav className="fixed top-0 inset-x-0 z-50 bg-white border-b border-gray-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 relative rounded-xl overflow-hidden bg-black">
-              <Image src="/wecool-logo.jpg" alt="Wecool Logo" fill className="object-cover" sizes="40px" quality={100} />
+            <div className="w-10 h-10 relative">
+              <Image src="/wecool-logo.png" alt="Wecool Logo" fill className="object-contain" sizes="40px" quality={100} />
             </div>
             <div>
               <p className="text-gray-900 font-extrabold text-lg leading-none">Wecool</p>
@@ -80,8 +80,8 @@ export default async function RootPage() {
 
           {/* Logo card */}
           <div className="flex-shrink-0">
-            <div className="w-64 h-64 relative rounded-3xl overflow-hidden shadow-2xl shadow-orange-100 ring-8 ring-orange-50 bg-black">
-              <Image src="/wecool-logo.jpg" alt="Wecool" fill className="object-cover" sizes="256px" quality={100} />
+            <div className="w-64 h-48 relative">
+              <Image src="/wecool-logo.png" alt="Wecool" fill className="object-contain" sizes="256px" quality={100} />
             </div>
             <p className="text-center mt-4 text-2xl font-black text-gray-900">Wecool</p>
             <p className="text-center text-sm font-semibold text-orange-500 tracking-widest uppercase">Payroll System</p>
@@ -165,8 +165,8 @@ export default async function RootPage() {
       {/* CTA */}
       <section className="py-20 px-6 bg-gray-900">
         <div className="max-w-2xl mx-auto text-center">
-          <div className="w-20 h-20 relative mx-auto mb-6 rounded-2xl overflow-hidden bg-black ring-4 ring-orange-500/30">
-            <Image src="/wecool-logo.jpg" alt="Wecool" fill className="object-cover" sizes="80px" quality={100} />
+          <div className="w-32 h-24 relative mx-auto mb-6">
+            <Image src="/wecool-logo.png" alt="Wecool" fill className="object-contain" sizes="128px" quality={100} />
           </div>
           <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">
             Ready to streamline<br />your payroll?
@@ -183,8 +183,8 @@ export default async function RootPage() {
       <footer className="bg-gray-900 border-t border-gray-800 py-8 px-6">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 relative rounded-lg overflow-hidden bg-black">
-              <Image src="/wecool-logo.jpg" alt="Wecool" fill className="object-cover" sizes="28px" quality={100} />
+            <div className="w-8 h-6 relative">
+              <Image src="/wecool-logo.png" alt="Wecool" fill className="object-contain" sizes="32px" quality={100} />
             </div>
             <span className="text-white font-bold text-sm">Wecool <span className="text-gray-500 font-normal">Payroll System</span></span>
           </div>
