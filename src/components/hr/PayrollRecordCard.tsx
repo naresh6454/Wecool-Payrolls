@@ -78,7 +78,7 @@ export default function PayrollRecordCard({
 
   const perDay = Number(rec.perDaySalary) || (Number(rec.monthlySalary) / 26);
   // settings assumed from record (professional tax is fixed)
-  const LATE_FREE = 3;
+  const LATE_FREE = 5;
   const LATE_PER_HALF = 2;
 
   const initFields = (): EditFields => ({
