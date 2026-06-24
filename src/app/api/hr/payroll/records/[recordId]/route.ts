@@ -16,6 +16,7 @@ const manualEditSchema = z.object({
   presentDays: z.number().min(0),
   lopDays: z.number().min(0),
   lateCount: z.number().min(0),
+  useLeaveBalance: z.boolean().optional(),
 });
 
 const schema = z.union([
@@ -37,8 +38,47 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ re
 
     // Manual field edit — recalculate gross/deductions/net
     if ("basicSalary" in body) {
+      const record = await prisma.payrollRecord.findUnique({
+        where: { id: recordId },
+        select: { employeeId: true, payrollRunId: true, perDaySalary: true, paidLeaveDays: true },
+      });
+      if (!record) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+      let finalLopDays = body.lopDays;
+      let finalLopDeduction = body.lopDeduction;
+      let finalPaidLeaveDays = Number(record.paidLeaveDays);
+
+      // If HR chose to use leave balance, convert as much LOP as possible to paid leave
+      if (body.useLeaveBalance) {
+        const payrollRun = await prisma.payrollRun.findUnique({
+          where: { id: record.payrollRunId },
+          select: { periodEnd: true },
+        });
+        const leaveYear = new Date(payrollRun!.periodEnd).getFullYear();
+        const lb = await prisma.leaveBalance.findFirst({
+          where: { employeeId: record.employeeId, year: leaveYear, leaveType: "LEAVE" },
+        });
+
+        if (lb) {
+          const available = Math.max(0, Number(lb.totalAllocated) - Number(lb.used));
+          const daysToConvert = Math.min(finalLopDays, available);
+
+          if (daysToConvert > 0) {
+            finalPaidLeaveDays += daysToConvert;
+            finalLopDays = Math.max(0, finalLopDays - daysToConvert);
+            const perDay = Number(record.perDaySalary);
+            finalLopDeduction = Math.round(finalLopDays * perDay * 100) / 100;
+
+            await prisma.leaveBalance.update({
+              where: { id: lb.id },
+              data: { used: { increment: daysToConvert } },
+            });
+          }
+        }
+      }
+
       const grossEarnings = body.basicSalary + body.hra + body.conveyance + body.bonus + body.specialAllowance + body.overtimeAmount;
-      const totalDeductions = body.professionalTax + body.lopDeduction + body.lateDeduction;
+      const totalDeductions = body.professionalTax + finalLopDeduction + body.lateDeduction;
       const netSalary = Math.max(0, grossEarnings - totalDeductions);
 
       const updated = await prisma.payrollRecord.update({
@@ -51,15 +91,27 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ re
           specialAllowance: body.specialAllowance,
           overtimeAmount: body.overtimeAmount,
           professionalTax: body.professionalTax,
-          lopDeduction: body.lopDeduction,
+          lopDeduction: finalLopDeduction,
           lateDeduction: body.lateDeduction,
           presentDays: body.presentDays,
-          lopDays: body.lopDays,
+          lopDays: finalLopDays,
+          paidLeaveDays: finalPaidLeaveDays,
           lateCount: body.lateCount,
           grossEarnings,
           totalDeductions,
           netSalary,
         },
+      });
+
+      // Fetch updated leave balance so the UI can reflect changes
+      const payrollRun2 = await prisma.payrollRun.findUnique({
+        where: { id: record.payrollRunId },
+        select: { periodEnd: true },
+      });
+      const leaveYear2 = new Date(payrollRun2!.periodEnd).getFullYear();
+      const updatedLb = await prisma.leaveBalance.findFirst({
+        where: { employeeId: record.employeeId, year: leaveYear2, leaveType: "LEAVE" },
+        select: { totalAllocated: true, used: true },
       });
 
       return NextResponse.json({
@@ -74,10 +126,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ re
         lateDeduction: Number(updated.lateDeduction),
         presentDays: Number(updated.presentDays),
         lopDays: Number(updated.lopDays),
+        paidLeaveDays: Number(updated.paidLeaveDays),
         lateCount: Number(updated.lateCount),
         grossEarnings: Number(updated.grossEarnings),
         totalDeductions: Number(updated.totalDeductions),
         netSalary: Number(updated.netSalary),
+        leaveBalance: updatedLb
+          ? { totalAllocated: Number(updatedLb.totalAllocated), used: Number(updatedLb.used) }
+          : null,
       });
     }
 

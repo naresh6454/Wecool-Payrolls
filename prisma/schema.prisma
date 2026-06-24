@@ -118,6 +118,7 @@ model AttendanceUpload {
   id               String    @id @default(uuid())
   fileName         String    @map("file_name")
   filePath         String    @map("file_path")
+  fileContent      Bytes?    @map("file_content")
   periodStart      DateTime  @map("period_start")
   periodEnd        DateTime  @map("period_end")
   payrollMonth     String    @map("payroll_month")

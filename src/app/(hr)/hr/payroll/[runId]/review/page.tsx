@@ -108,8 +108,11 @@ export default function PayrollReviewPage() {
     setSaving(null);
   };
 
-  const saveEdit = async (recordId: string, fields: Record<string, string>) => {
-    const body = Object.fromEntries(Object.entries(fields).map(([k, v]) => [k, parseFloat(v) || 0]));
+  const saveEdit = async (recordId: string, fields: Record<string, string>, useLeaveBalance?: boolean) => {
+    const body = {
+      ...Object.fromEntries(Object.entries(fields).map(([k, v]) => [k, parseFloat(v) || 0])),
+      ...(useLeaveBalance !== undefined ? { useLeaveBalance } : {}),
+    };
     const res = await fetch(`/api/hr/payroll/records/${recordId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
