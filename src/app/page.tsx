@@ -21,8 +21,8 @@ export default async function RootPage() {
       <nav className="fixed top-0 inset-x-0 z-50 bg-white border-b border-gray-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 relative">
-              <Image src="/wecool-logo.png" alt="Wecool Logo" fill className="object-contain" sizes="40px" quality={100} />
+            <div className="w-14 h-14 relative">
+              <Image src="/wecool-logo.png" alt="Wecool Logo" fill className="object-contain" sizes="56px" quality={100} />
             </div>
             <div>
               <p className="text-gray-900 font-extrabold text-lg leading-none">Wecool</p>
@@ -94,8 +94,9 @@ export default async function RootPage() {
                     <div className="w-3 h-3 rounded-full bg-yellow-400"/>
                     <div className="w-3 h-3 rounded-full bg-green-400"/>
                   </div>
-                  <div className="flex-1 mx-3 bg-white rounded-md px-3 py-1 text-xs text-gray-400 border border-gray-200">
-                    wecoolpayroll.co.in/hr/payroll
+                  <div className="flex-1 mx-3 bg-white rounded-md px-3 py-1 text-xs text-gray-400 border border-gray-200 flex items-center justify-between">
+                    <span>wecoolpayroll.co.in/hr/payroll</span>
+                    <span className="text-[10px] text-orange-400 font-semibold ml-2 whitespace-nowrap">✦ Created by Naresh</span>
                   </div>
                 </div>
                 {/* Dashboard content */}
