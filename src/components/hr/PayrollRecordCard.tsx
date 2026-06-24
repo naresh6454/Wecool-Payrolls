@@ -157,7 +157,7 @@ export default function PayrollRecordCard({
       if (key === "lateCount") {
         const late = parseFloat(val) || 0;
         const billableLates = Math.max(0, late - LATE_FREE);
-        const halfDays = Math.floor(billableLates / LATE_PER_HALF);
+        const halfDays = Math.ceil(billableLates / LATE_PER_HALF);
         next.lateDeduction = String(Math.round(halfDays * perDay * 0.5 * 100) / 100);
       }
       return next;
