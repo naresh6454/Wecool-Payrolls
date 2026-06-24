@@ -198,7 +198,7 @@ export async function runPayrollProcessing(uploadId: string, initiatorId: string
       }
     }
 
-    const recordedDays = enrichedRecords.length || periodCalendarDays;
+    const recordedDays = periodCalendarDays;
     const rawSummary = buildAttendanceSummary(
       enrichedRecords, recordedDays, explicitLeaveDays,
       emp.employeeType as "OFFICE" | "WAREHOUSE", settings.minOtHoursForExtraPay
