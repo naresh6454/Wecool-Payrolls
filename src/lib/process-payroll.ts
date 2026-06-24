@@ -264,7 +264,8 @@ export async function runPayrollProcessing(uploadId: string, initiatorId: string
 
   // Batch create all payroll records
   if (payrollRecordsToCreate.length > 0) {
-    await prisma.payrollRecord.createMany({ data: payrollRecordsToCreate as Parameters<typeof prisma.payrollRecord.createMany>[0]["data"] });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await prisma.payrollRecord.createMany({ data: payrollRecordsToCreate as any });
   }
 
   // Use aggregation instead of fetch-all + reduce
