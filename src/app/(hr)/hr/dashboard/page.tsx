@@ -199,7 +199,25 @@ export default async function HRDashboard() {
               </Link>
             }
           />
-          <div className="overflow-x-auto">
+          {/* Mobile card list */}
+          <div className="md:hidden divide-y divide-stone-50">
+            {recentLeaves.map((lr) => (
+              <div key={lr.id} className="px-4 py-3 flex items-center gap-3 hover:bg-stone-50">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-stone-900">{lr.employee.firstName} {lr.employee.lastName}</p>
+                  <div className="flex flex-wrap items-center gap-1.5 mt-1">
+                    <Badge variant={lr.leaveType === "MEDICAL" ? "red" : lr.leaveType === "SICK" ? "amber" : "blue"} size="sm">{lr.leaveType}</Badge>
+                    <span className="text-xs text-stone-400">{format(lr.fromDate, "MMM d")} – {format(lr.toDate, "MMM d")} · {Number(lr.totalDays)}d</span>
+                  </div>
+                </div>
+                <Link href="/hr/leaves">
+                  <button className="text-xs font-semibold text-orange-500 hover:text-orange-600 flex-shrink-0">Review →</button>
+                </Link>
+              </div>
+            ))}
+          </div>
+          {/* Desktop table */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="bg-stone-50 border-b border-stone-100">
@@ -211,21 +229,15 @@ export default async function HRDashboard() {
               <tbody className="divide-y divide-stone-50">
                 {recentLeaves.map((lr) => (
                   <tr key={lr.id} className="hover:bg-stone-50 transition-all">
-                    <td className="px-6 py-3 text-sm font-medium text-stone-900">
-                      {lr.employee.firstName} {lr.employee.lastName}
-                    </td>
+                    <td className="px-6 py-3 text-sm font-medium text-stone-900">{lr.employee.firstName} {lr.employee.lastName}</td>
                     <td className="px-6 py-3">
-                      <Badge variant={lr.leaveType === "MEDICAL" ? "red" : lr.leaveType === "SICK" ? "amber" : "blue"}>
-                        {lr.leaveType}
-                      </Badge>
+                      <Badge variant={lr.leaveType === "MEDICAL" ? "red" : lr.leaveType === "SICK" ? "amber" : "blue"}>{lr.leaveType}</Badge>
                     </td>
                     <td className="px-6 py-3 text-sm text-stone-600">{format(lr.fromDate, "MMM d, yyyy")}</td>
                     <td className="px-6 py-3 text-sm text-stone-600">{format(lr.toDate, "MMM d, yyyy")}</td>
                     <td className="px-6 py-3 text-sm font-semibold text-stone-800">{Number(lr.totalDays)}</td>
                     <td className="px-6 py-3">
-                      <Link href="/hr/leaves">
-                        <button className="text-xs font-semibold text-orange-500 hover:text-orange-600">Review →</button>
-                      </Link>
+                      <Link href="/hr/leaves"><button className="text-xs font-semibold text-orange-500 hover:text-orange-600">Review →</button></Link>
                     </td>
                   </tr>
                 ))}

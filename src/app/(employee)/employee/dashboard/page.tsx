@@ -97,11 +97,11 @@ export default async function EmployeeDashboard() {
             {payslips.length === 0 ? (
               <div className="px-6 py-10 text-center text-stone-400 text-sm">No payslips yet</div>
             ) : payslips.map((ps) => (
-              <div key={ps.id} className="flex items-center gap-3 px-6 py-3 hover:bg-stone-50 transition-all">
+              <div key={ps.id} className="flex items-center gap-3 px-4 sm:px-6 py-3 hover:bg-stone-50 transition-all">
                 <div className="w-9 h-9 rounded-xl bg-green-100 flex items-center justify-center flex-shrink-0">
                   <Wallet className="w-4 h-4 text-green-600" />
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-stone-900">{ps.payrollRunRel.payrollMonth}</p>
                   <p className="text-xs text-stone-400">Net: <span className="font-semibold text-green-600">₹{Number(ps.netSalary).toLocaleString("en-IN")}</span></p>
                 </div>
@@ -123,9 +123,9 @@ export default async function EmployeeDashboard() {
             {notifications.length === 0 ? (
               <div className="px-6 py-10 text-center text-stone-400 text-sm">No notifications</div>
             ) : notifications.map((n) => (
-              <div key={n.id} className="flex items-start gap-3 px-6 py-3 hover:bg-stone-50 transition-all">
+              <div key={n.id} className="flex items-start gap-3 px-4 sm:px-6 py-3 hover:bg-stone-50 transition-all">
                 <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${n.isRead ? "bg-stone-200" : "bg-orange-500"}`} />
-                <div>
+                <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-stone-900">{n.title}</p>
                   <p className="text-xs text-stone-500 mt-0.5">{n.message}</p>
                   <p className="text-xs text-stone-300 mt-1">{format(n.createdAt, "MMM d, h:mm a")}</p>
@@ -172,7 +172,7 @@ export default async function EmployeeDashboard() {
             {recentLeave.length === 0 ? (
               <div className="px-6 py-10 text-center text-stone-400 text-sm">No leave requests</div>
             ) : recentLeave.map((lr) => (
-              <div key={lr.id} className="flex items-center gap-3 px-6 py-3 hover:bg-stone-50 transition-all">
+              <div key={lr.id} className="flex items-center gap-3 px-4 sm:px-6 py-3 hover:bg-stone-50 transition-all">
                 <div className="w-9 h-9 rounded-xl bg-orange-100 flex items-center justify-center flex-shrink-0">
                   <CalendarCheck className="w-4 h-4 text-orange-600" />
                 </div>

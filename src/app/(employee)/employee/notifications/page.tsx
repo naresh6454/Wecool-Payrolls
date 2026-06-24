@@ -86,17 +86,17 @@ export default function NotificationsPage() {
             {notifications.map((n) => (
               <div
                 key={n.id}
-                className={`flex items-start gap-4 px-6 py-4 cursor-pointer transition-all hover:bg-stone-50 ${!n.isRead ? "bg-orange-50/30" : ""}`}
+                className={`flex items-start gap-3 px-4 sm:px-6 py-3 sm:py-4 cursor-pointer transition-all hover:bg-stone-50 ${!n.isRead ? "bg-orange-50/30" : ""}`}
                 onClick={() => !n.isRead && markRead(n.id)}
               >
                 <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${n.isRead ? "bg-stone-200" : "bg-orange-500"}`} />
                 <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 text-xs font-bold ${TYPE_COLORS[n.type] || "bg-stone-100 text-stone-500"}`}>
                   <Bell className="w-3.5 h-3.5" />
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <p className={`text-sm font-semibold ${n.isRead ? "text-stone-700" : "text-stone-900"}`}>{n.title}</p>
                   <p className="text-sm text-stone-500 mt-0.5">{n.message}</p>
-                  <p className="text-xs text-stone-400 mt-1">{format(new Date(n.createdAt), "MMMM d, yyyy, h:mm a")}</p>
+                  <p className="text-xs text-stone-400 mt-1">{format(new Date(n.createdAt), "MMM d, yyyy, h:mm a")}</p>
                 </div>
               </div>
             ))}

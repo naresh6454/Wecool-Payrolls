@@ -108,9 +108,9 @@ export default function PayslipsPage() {
               No payslips generated yet. Approve the payroll run to generate them.
             </div>
           ) : payslips.map(p => (
-            <div key={p.id} className="flex items-center gap-4 px-6 py-4">
+            <div key={p.id} className="flex flex-wrap items-center gap-3 px-4 sm:px-6 py-4">
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
+                <div className="flex flex-wrap items-center gap-2 mb-0.5">
                   <span className="font-semibold text-stone-800 text-sm">
                     {p.employee.firstName} {p.employee.lastName}
                   </span>
@@ -119,13 +119,13 @@ export default function PayslipsPage() {
                     {p.employee.employeeType}
                   </Badge>
                 </div>
-                <div className="text-xs text-stone-400">{p.employee.user.email}</div>
+                <div className="text-xs text-stone-400 truncate">{p.employee.user.email}</div>
                 {p.emailError && (
                   <div className="text-xs text-red-500 mt-0.5">{p.emailError}</div>
                 )}
               </div>
 
-              <div className="text-right mr-6">
+              <div className="text-right">
                 <div className="text-sm font-bold text-green-600">
                   ₹{Number(p.netSalary).toLocaleString("en-IN", { maximumFractionDigits: 0 })}
                 </div>
@@ -136,7 +136,8 @@ export default function PayslipsPage() {
                 {p.emailSent ? (
                   <div className="flex items-center gap-1.5 text-xs text-green-600 font-medium">
                     <CheckCircle className="w-4 h-4" />
-                    {p.emailSentAt ? format(new Date(p.emailSentAt), "dd MMM, hh:mm a") : "Sent"}
+                    <span className="hidden sm:inline">{p.emailSentAt ? format(new Date(p.emailSentAt), "dd MMM, hh:mm a") : "Sent"}</span>
+                    <span className="sm:hidden">Sent</span>
                   </div>
                 ) : p.emailError ? (
                   <button

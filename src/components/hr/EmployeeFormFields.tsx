@@ -58,7 +58,7 @@ export default function EmployeeFormFields({ form, setForm, departments, designa
             <p className="text-xs text-stone-400 mt-1">Must match the ID used in attendance sheets</p>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-stone-500 mb-1.5">First Name <span className="text-red-400">*</span></label>
               <input value={form.firstName} onChange={e => set("firstName", e.target.value)} className={INPUT} placeholder="Rajesh" />
@@ -125,7 +125,7 @@ export default function EmployeeFormFields({ form, setForm, departments, designa
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-stone-500 mb-1.5">Department</label>
               <select value={form.departmentId}

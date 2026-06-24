@@ -100,7 +100,7 @@ export default function LeavesPage() {
                   <option value="LOP">Loss of Pay</option>
                 </select>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-stone-500 mb-1.5">From Date</label>
                   <input
@@ -153,7 +153,7 @@ export default function LeavesPage() {
       )}
 
       {/* Leave Balances */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
         {balances.map((b) => {
           const avail = Number(b.totalAllocated) - Number(b.used);
           return (
@@ -183,29 +183,30 @@ export default function LeavesPage() {
         ) : (
           <div className="divide-y divide-stone-50">
             {requests.map((lr) => (
-              <div key={lr.id} className="flex items-center gap-4 px-6 py-3 hover:bg-stone-50 transition-all">
-                <div className="w-9 h-9 rounded-xl bg-orange-100 flex items-center justify-center flex-shrink-0">
+              <div key={lr.id} className="flex items-start gap-3 px-4 sm:px-6 py-3 hover:bg-stone-50 transition-all">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-orange-100 flex items-center justify-center flex-shrink-0 mt-0.5">
                   <CalendarCheck className="w-4 h-4 text-orange-600" />
                 </div>
-                <div className="flex-1">
-                  <p className="text-sm font-semibold text-stone-900">
-                    {lr.leaveType} Leave — {Number(lr.totalDays)} day{Number(lr.totalDays) !== 1 ? "s" : ""}
-                  </p>
-                  <p className="text-xs text-stone-400">
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="text-sm font-semibold text-stone-900">
+                      {lr.leaveType} Leave — {Number(lr.totalDays)} day{Number(lr.totalDays) !== 1 ? "s" : ""}
+                    </p>
+                    <Badge variant={lr.status === "APPROVED" ? "green" : lr.status === "PENDING" ? "amber" : "red"}>
+                      {lr.status}
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-stone-400 mt-0.5">
                     {format(new Date(lr.fromDate), "MMM d")} – {format(new Date(lr.toDate), "MMM d, yyyy")}
                     <span className="mx-1">·</span>
                     {lr.reason}
                   </p>
                   {lr.status === "REJECTED" && lr.rejectionReason && (
-                    <p className="text-xs text-red-500 mt-1 font-medium">
-                      Rejected: {lr.rejectionReason}
-                    </p>
+                    <p className="text-xs text-red-500 mt-1 font-medium">Rejected: {lr.rejectionReason}</p>
                   )}
+                  <p className="text-xs text-stone-400 mt-0.5 sm:hidden">{format(new Date(lr.createdAt), "MMM d, yyyy")}</p>
                 </div>
-                <p className="text-xs text-stone-400">{format(new Date(lr.createdAt), "MMM d, yyyy")}</p>
-                <Badge variant={lr.status === "APPROVED" ? "green" : lr.status === "PENDING" ? "amber" : "red"}>
-                  {lr.status}
-                </Badge>
+                <p className="text-xs text-stone-400 hidden sm:block flex-shrink-0">{format(new Date(lr.createdAt), "MMM d, yyyy")}</p>
               </div>
             ))}
           </div>

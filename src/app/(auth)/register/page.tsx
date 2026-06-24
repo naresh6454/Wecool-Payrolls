@@ -91,15 +91,15 @@ export default function RegisterPage() {
         <p className="text-green-200 text-xs">© 2025 Wecool Technologies</p>
       </div>
 
-      <div className="flex-1 flex items-center justify-center p-8 bg-[#FAFAF8] overflow-y-auto">
-        <div className="w-full max-w-[480px] py-8">
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-8 bg-[#FAFAF8] overflow-y-auto">
+        <div className="w-full max-w-[480px] py-4 sm:py-8">
           <div className="mb-6">
             <h1 className="text-2xl font-bold text-stone-900">Create your account</h1>
             <p className="text-stone-500 text-sm mt-1">All fields marked are required for HR review</p>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-semibold text-stone-600 mb-1.5 uppercase tracking-wide">First Name *</label>
                 <input {...register("firstName")} placeholder="Sneha"
@@ -128,7 +128,7 @@ export default function RegisterPage() {
               {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-semibold text-stone-600 mb-1.5 uppercase tracking-wide">Phone</label>
                 <input {...register("phone")} placeholder="+91 9876543210"
@@ -146,7 +146,7 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-semibold text-stone-600 mb-1.5 uppercase tracking-wide">Employee Type *</label>
                 <select {...register("employeeType")}

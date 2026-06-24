@@ -26,7 +26,7 @@ export default async function AttendanceUploadPage() {
             {uploads.length === 0 ? (
               <div className="px-6 py-10 text-center text-stone-400 text-sm">No uploads yet</div>
             ) : uploads.map((u) => (
-              <div key={u.id} className="px-6 py-4 hover:bg-stone-50 transition-all">
+              <div key={u.id} className="px-4 sm:px-6 py-4 hover:bg-stone-50 transition-all">
                 <div className="flex items-start justify-between mb-1">
                   <div>
                     <p className="text-sm font-semibold text-stone-900">{u.payrollMonth}</p>

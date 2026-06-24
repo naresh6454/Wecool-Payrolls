@@ -38,23 +38,23 @@ export default async function PayslipsPage() {
           <CardHeader title={`${payslips.length} Payslips`} />
           <div className="divide-y divide-stone-50">
             {payslips.map((ps) => (
-              <div key={ps.id} className="flex items-center gap-4 px-6 py-4 hover:bg-stone-50 transition-all">
-                <div className="w-12 h-12 rounded-2xl bg-green-100 flex items-center justify-center flex-shrink-0">
-                  <FileText className="w-6 h-6 text-green-600" />
+              <div key={ps.id} className="flex flex-wrap items-center gap-3 px-4 sm:px-6 py-4 hover:bg-stone-50 transition-all">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-green-100 flex items-center justify-center flex-shrink-0">
+                  <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                 </div>
-                <div className="flex-1">
-                  <p className="text-base font-bold text-stone-900">{ps.payrollRunRel.payrollMonth}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm sm:text-base font-bold text-stone-900">{ps.payrollRunRel.payrollMonth}</p>
                   <p className="text-xs text-stone-400">
                     {format(new Date(ps.payrollRunRel.periodStart), "MMM d")} – {format(new Date(ps.payrollRunRel.periodEnd), "MMM d, yyyy")}
-                    <span className="mx-1.5">·</span>
-                    Generated {format(new Date(ps.generatedAt), "MMM d, yyyy")}
+                    <span className="mx-1.5 hidden sm:inline">·</span>
+                    <span className="hidden sm:inline">Generated {format(new Date(ps.generatedAt), "MMM d, yyyy")}</span>
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-lg font-black text-green-600">₹{Number(ps.netSalary).toLocaleString("en-IN")}</p>
+                  <p className="text-base sm:text-lg font-black text-green-600">₹{Number(ps.netSalary).toLocaleString("en-IN")}</p>
                   <p className="text-xs text-stone-400">Net Pay</p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   {ps.emailSent && (
                     <Badge variant="green" size="sm">
                       <Mail className="w-3 h-3 inline mr-0.5" />Emailed
