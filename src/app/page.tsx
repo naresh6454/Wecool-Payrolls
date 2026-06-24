@@ -78,207 +78,110 @@ export default async function RootPage() {
             </div>
           </div>
 
-          {/* Right side illustration */}
+          {/* Right side — dashboard mockup */}
           <div className="flex-shrink-0 relative w-full max-w-lg">
-            {/* Logo */}
-            <div className="w-72 h-44 relative mx-auto">
-              <Image src="/wecool-logo.png" alt="Wecool" fill className="object-contain" sizes="288px" quality={100} />
+
+            {/* Dashboard mockup illustration */}
+            <div className="relative">
+              {/* Glow behind */}
+              <div className="absolute inset-0 bg-gradient-to-br from-orange-100 via-white to-green-100 rounded-3xl blur-xl opacity-60 scale-105"/>
+              {/* Browser frame */}
+              <div className="relative bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
+                {/* Browser chrome */}
+                <div className="bg-gray-100 border-b border-gray-200 px-4 py-2.5 flex items-center gap-2">
+                  <div className="flex gap-1.5">
+                    <div className="w-3 h-3 rounded-full bg-red-400"/>
+                    <div className="w-3 h-3 rounded-full bg-yellow-400"/>
+                    <div className="w-3 h-3 rounded-full bg-green-400"/>
+                  </div>
+                  <div className="flex-1 mx-3 bg-white rounded-md px-3 py-1 text-xs text-gray-400 border border-gray-200">
+                    wecoolpayroll.co.in/hr/payroll
+                  </div>
+                </div>
+                {/* Dashboard content */}
+                <div className="bg-[#F7F6F3] p-4 space-y-3">
+                  {/* Top stats row */}
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { label: "Total Payroll", value: "₹8,42,300", color: "text-orange-600", bg: "bg-orange-50", border: "border-orange-100" },
+                      { label: "Employees", value: "24 Active", color: "text-green-700", bg: "bg-green-50", border: "border-green-100" },
+                      { label: "Payslips", value: "24 Sent", color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-100" },
+                    ].map(s => (
+                      <div key={s.label} className={`${s.bg} border ${s.border} rounded-xl p-2.5`}>
+                        <p className="text-gray-400 text-[9px] font-semibold uppercase tracking-wide">{s.label}</p>
+                        <p className={`${s.color} text-sm font-black mt-0.5`}>{s.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                  {/* Payroll table header */}
+                  <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+                    <div className="bg-gray-900 px-3 py-2 flex items-center justify-between">
+                      <span className="text-white text-[10px] font-bold">Payroll — June 2026</span>
+                      <span className="bg-orange-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full">Processing</span>
+                    </div>
+                    {/* Table rows */}
+                    {[
+                      { name: "Arjun Kumar", dept: "Engineering", days: "21", net: "₹61,299", status: "approved", color: "bg-green-100 text-green-700" },
+                      { name: "Priya Sharma", dept: "HR", days: "20", net: "₹48,750", status: "approved", color: "bg-green-100 text-green-700" },
+                      { name: "Rahul Mehta", dept: "Finance", days: "19", net: "₹54,200", status: "review", color: "bg-orange-100 text-orange-700" },
+                      { name: "Sneha Patel", dept: "Design", days: "21", net: "₹42,500", status: "approved", color: "bg-green-100 text-green-700" },
+                    ].map((row, i) => (
+                      <div key={row.name} className={`px-3 py-2 flex items-center gap-2 text-[10px] border-b border-gray-50 ${i % 2 === 1 ? "bg-gray-50/50" : "bg-white"}`}>
+                        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-[8px] flex-shrink-0">
+                          {row.name[0]}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-gray-800 font-semibold truncate">{row.name}</p>
+                          <p className="text-gray-400">{row.dept}</p>
+                        </div>
+                        <div className="text-gray-500 w-8 text-center">{row.days}d</div>
+                        <div className="text-gray-900 font-bold w-14 text-right">{row.net}</div>
+                        <span className={`${row.color} text-[8px] font-bold px-1.5 py-0.5 rounded-full capitalize`}>{row.status}</span>
+                      </div>
+                    ))}
+                  </div>
+                  {/* Bottom: mini chart + leave */}
+                  <div className="grid grid-cols-2 gap-2">
+                    {/* Attendance bar chart */}
+                    <div className="bg-white rounded-xl border border-gray-100 p-3">
+                      <p className="text-[9px] font-bold text-gray-500 uppercase mb-2">Attendance</p>
+                      <div className="flex items-end gap-1 h-10">
+                        {[70, 85, 90, 75, 95, 88, 92].map((h, i) => (
+                          <div key={i} className="flex-1 rounded-t-sm" style={{ height: `${h}%`, background: i === 4 ? "#f97316" : "#e2e8f0" }}/>
+                        ))}
+                      </div>
+                      <div className="flex justify-between mt-1">
+                        <span className="text-[8px] text-gray-400">Mon</span>
+                        <span className="text-[8px] text-gray-400">Sun</span>
+                      </div>
+                    </div>
+                    {/* Leave summary */}
+                    <div className="bg-white rounded-xl border border-gray-100 p-3 space-y-1.5">
+                      <p className="text-[9px] font-bold text-gray-500 uppercase">Leave Summary</p>
+                      {[
+                        { label: "Present", val: 21, color: "bg-green-500", total: 26 },
+                        { label: "LOP", val: 2, color: "bg-red-400", total: 26 },
+                        { label: "W/Off", val: 4, color: "bg-gray-300", total: 26 },
+                      ].map(l => (
+                        <div key={l.label}>
+                          <div className="flex justify-between mb-0.5">
+                            <span className="text-[8px] text-gray-500">{l.label}</span>
+                            <span className="text-[8px] font-bold text-gray-700">{l.val}</span>
+                          </div>
+                          <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                            <div className={`h-full ${l.color} rounded-full`} style={{ width: `${(l.val/l.total)*100}%` }}/>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/* Floating badge */}
+              <div className="absolute -top-3 -right-3 bg-orange-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg shadow-orange-200">
+                June 2026 ✓
+              </div>
             </div>
-            <p className="text-center mt-1 text-xl font-black text-gray-900">Wecool</p>
-            <p className="text-center text-xs font-bold text-orange-500 tracking-widest uppercase mb-4">Payroll System</p>
-
-            {/* Flat-design people illustration — 3×2 grid, reference art style */}
-            <svg viewBox="0 0 520 310" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
-              <defs>
-                <filter id="cs" x="-20%" y="-20%" width="140%" height="140%">
-                  <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#00000018"/>
-                </filter>
-              </defs>
-
-              {/* ── ROW 1 ── */}
-
-              {/* P1 — Man, purple-blue shirt + tie, right hand raised holding phone */}
-              <g transform="translate(88,108)">
-                <path d="M-38 20C-42 58-40 92-38 108L38 108C40 92 42 58 38 20C24 32 12 36 0 36C-12 36-24 32-38 20Z" fill="#7B86E2" stroke="#212121" strokeWidth="2.2" strokeLinejoin="round"/>
-                <path d="M-11 20L0 34L11 20" fill="none" stroke="white" strokeWidth="2.4" strokeLinecap="round"/>
-                <path d="M-5 20L0 29L5 20" fill="#212121"/>
-                <path d="M-3.5 29L0 72L3.5 29Z" fill="#212121"/>
-                <rect x="-8" y="6" width="16" height="16" rx="7" fill="#FECBA1" stroke="#212121" strokeWidth="2"/>
-                <ellipse cx="0" cy="-22" rx="28" ry="30" fill="#FECBA1" stroke="#212121" strokeWidth="2.5"/>
-                <path d="M-28-28Q-26-56 0-58Q26-56 28-28Q22-42 0-44Q-22-42-28-28Z" fill="#212121"/>
-                <ellipse cx="-28" cy="-22" rx="4.5" ry="6" fill="#FECBA1" stroke="#212121" strokeWidth="1.8"/>
-                <ellipse cx="28" cy="-22" rx="4.5" ry="6" fill="#FECBA1" stroke="#212121" strokeWidth="1.8"/>
-                <ellipse cx="-10" cy="-24" rx="4" ry="4.5" fill="#212121"/><circle cx="-8.5" cy="-25.5" r="1.5" fill="white"/>
-                <ellipse cx="10" cy="-24" rx="4" ry="4.5" fill="#212121"/><circle cx="11.5" cy="-25.5" r="1.5" fill="white"/>
-                <path d="M-16-32Q-10-36-4-32" stroke="#212121" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-                <path d="M4-32Q10-36 16-32" stroke="#212121" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-                <path d="M-8-12Q0-5 8-12" stroke="#212121" strokeWidth="2" strokeLinecap="round" fill="none"/>
-                {/* right arm up holding phone */}
-                <path d="M38 26Q62 12 66-10" stroke="#FECBA1" strokeWidth="18" strokeLinecap="round" fill="none"/>
-                <path d="M38 26Q62 12 66-10" stroke="#212121" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-                <rect x="58" y="-36" width="22" height="38" rx="4" fill="#E8EAF6" stroke="#212121" strokeWidth="2"/>
-                <rect x="62" y="-31" width="14" height="25" rx="2" fill="#9FA8DA"/>
-                <circle cx="69" cy="-5" r="2.5" fill="#7986CB"/>
-                {/* left arm down open hand */}
-                <path d="M-38 26Q-60 42-56 68" stroke="#FECBA1" strokeWidth="18" strokeLinecap="round" fill="none"/>
-                <path d="M-38 26Q-60 42-56 68" stroke="#212121" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-                <ellipse cx="-54" cy="74" rx="12" ry="8" fill="#FECBA1" stroke="#212121" strokeWidth="2"/>
-              </g>
-
-              {/* P2 — Woman, dark blazer, lavender hair, phone to right ear */}
-              <g transform="translate(260,108)">
-                <path d="M-40 20C-44 58-42 92-40 108L40 108C42 92 44 58 40 20C26 34 13 38 0 38C-13 38-26 34-40 20Z" fill="#2D3748" stroke="#212121" strokeWidth="2.2" strokeLinejoin="round"/>
-                <path d="M-13 20L0 36L13 20" fill="none" stroke="white" strokeWidth="2.4" strokeLinecap="round"/>
-                <path d="M-40 20L-13 20" stroke="#212121" strokeWidth="1.5" fill="none"/>
-                <path d="M40 20L13 20" stroke="#212121" strokeWidth="1.5" fill="none"/>
-                <rect x="-8" y="6" width="16" height="16" rx="7" fill="#F5C5A3" stroke="#212121" strokeWidth="2"/>
-                <ellipse cx="0" cy="-22" rx="28" ry="30" fill="#F5C5A3" stroke="#212121" strokeWidth="2.5"/>
-                {/* lavender hair */}
-                <path d="M-28-30Q-26-58 0-60Q26-58 28-30Q22-44 0-46Q-22-44-28-30Z" fill="#C4A8D4" stroke="#212121" strokeWidth="1.5"/>
-                <path d="M-28-30Q-38 2-36 52Q-36 82-32 108" stroke="#C4A8D4" strokeWidth="18" strokeLinecap="round" fill="none"/>
-                <path d="M28-30Q38 2 36 52Q36 82 32 108" stroke="#C4A8D4" strokeWidth="18" strokeLinecap="round" fill="none"/>
-                <ellipse cx="-28" cy="-22" rx="4.5" ry="6" fill="#F5C5A3" stroke="#212121" strokeWidth="1.8"/>
-                <ellipse cx="-10" cy="-24" rx="4" ry="4.5" fill="#212121"/><circle cx="-8.5" cy="-25.5" r="1.5" fill="white"/>
-                <ellipse cx="10" cy="-24" rx="4" ry="4.5" fill="#212121"/><circle cx="11.5" cy="-25.5" r="1.5" fill="white"/>
-                <path d="M-16-32Q-10-36-4-32" stroke="#212121" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-                <path d="M4-32Q10-36 16-32" stroke="#212121" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-                <path d="M-6-12Q0-6 6-12" stroke="#212121" strokeWidth="2" strokeLinecap="round" fill="none"/>
-                {/* right arm raised to ear */}
-                <path d="M40 26Q58 8 54-18" stroke="#F5C5A3" strokeWidth="18" strokeLinecap="round" fill="none"/>
-                <path d="M40 26Q58 8 54-18" stroke="#212121" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-                <rect x="46" y="-44" width="18" height="30" rx="4" fill="#374151" stroke="#212121" strokeWidth="2"/>
-                <rect x="49" y="-39" width="12" height="18" rx="2" fill="#6B7280"/>
-                {/* left arm crosses body */}
-                <path d="M-40 26Q-30 52-12 58" stroke="#F5C5A3" strokeWidth="18" strokeLinecap="round" fill="none"/>
-                <path d="M-40 26Q-30 52-12 58" stroke="#212121" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-                <ellipse cx="-8" cy="62" rx="12" ry="8" fill="#F5C5A3" stroke="#212121" strokeWidth="2"/>
-              </g>
-
-              {/* P3 — Man, yellow sweater, blue short hair, holding phone in right hand */}
-              <g transform="translate(432,108)">
-                <path d="M-38 20C-42 58-40 92-38 108L38 108C40 92 42 58 38 20C24 32 12 36 0 36C-12 36-24 32-38 20Z" fill="#F5C842" stroke="#212121" strokeWidth="2.2" strokeLinejoin="round"/>
-                <rect x="-8" y="6" width="16" height="16" rx="7" fill="#FECBA1" stroke="#212121" strokeWidth="2"/>
-                <ellipse cx="0" cy="-22" rx="28" ry="30" fill="#FECBA1" stroke="#212121" strokeWidth="2.5"/>
-                {/* blue-teal short hair */}
-                <path d="M-28-28Q-26-56 0-58Q26-56 28-28Q22-42 0-44Q-22-42-28-28Z" fill="#5B9BD5" stroke="#212121" strokeWidth="1.5"/>
-                <ellipse cx="-28" cy="-22" rx="4.5" ry="6" fill="#FECBA1" stroke="#212121" strokeWidth="1.8"/>
-                <ellipse cx="28" cy="-22" rx="4.5" ry="6" fill="#FECBA1" stroke="#212121" strokeWidth="1.8"/>
-                <ellipse cx="-10" cy="-24" rx="4" ry="4.5" fill="#212121"/><circle cx="-8.5" cy="-25.5" r="1.5" fill="white"/>
-                <ellipse cx="10" cy="-24" rx="4" ry="4.5" fill="#212121"/><circle cx="11.5" cy="-25.5" r="1.5" fill="white"/>
-                <path d="M-16-32Q-10-36-4-32" stroke="#212121" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-                <path d="M4-32Q10-36 16-32" stroke="#212121" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-                <path d="M-8-12Q0-5 8-12" stroke="#212121" strokeWidth="2" strokeLinecap="round" fill="none"/>
-                {/* right arm out holding phone */}
-                <path d="M38 26Q56 22 60 42" stroke="#FECBA1" strokeWidth="18" strokeLinecap="round" fill="none"/>
-                <path d="M38 26Q56 22 60 42" stroke="#212121" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-                <rect x="54" y="30" width="22" height="36" rx="4" fill="#374151" stroke="#212121" strokeWidth="2"/>
-                <rect x="58" y="34" width="14" height="24" rx="2" fill="#4B5563"/>
-                <circle cx="65" cy="62" r="2.5" fill="#6B7280"/>
-                {/* left arm down */}
-                <path d="M-38 26Q-56 40-52 70" stroke="#FECBA1" strokeWidth="18" strokeLinecap="round" fill="none"/>
-                <path d="M-38 26Q-56 40-52 70" stroke="#212121" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-              </g>
-
-              {/* ── ROW 2 ── */}
-
-              {/* P4 — Woman, yellow top, black hair bun, both arms holding laptop */}
-              <g transform="translate(88,258)">
-                <path d="M-38 18C-42 54-40 88-38 104L38 104C40 88 42 54 38 18C24 30 12 34 0 34C-12 34-24 30-38 18Z" fill="#F5C842" stroke="#212121" strokeWidth="2.2" strokeLinejoin="round"/>
-                <rect x="-8" y="5" width="16" height="16" rx="7" fill="#F5C5A3" stroke="#212121" strokeWidth="2"/>
-                <ellipse cx="0" cy="-22" rx="27" ry="28" fill="#F5C5A3" stroke="#212121" strokeWidth="2.5"/>
-                {/* dark hair + bun */}
-                <path d="M-26-28Q-24-52 0-54Q24-52 26-28Q20-42 0-44Q-20-42-26-28Z" fill="#212121"/>
-                <circle cx="0" cy="-54" r="10" fill="#212121" stroke="#212121" strokeWidth="1.5"/>
-                <ellipse cx="-27" cy="-22" rx="4" ry="5.5" fill="#F5C5A3" stroke="#212121" strokeWidth="1.8"/>
-                <ellipse cx="27" cy="-22" rx="4" ry="5.5" fill="#F5C5A3" stroke="#212121" strokeWidth="1.8"/>
-                <ellipse cx="-10" cy="-24" rx="4" ry="4.5" fill="#212121"/><circle cx="-8.5" cy="-25.5" r="1.5" fill="white"/>
-                <ellipse cx="10" cy="-24" rx="4" ry="4.5" fill="#212121"/><circle cx="11.5" cy="-25.5" r="1.5" fill="white"/>
-                <path d="M-16-32Q-10-36-4-32" stroke="#212121" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-                <path d="M4-32Q10-36 16-32" stroke="#212121" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-                <path d="M-7-12Q0-5 7-12" stroke="#212121" strokeWidth="2" strokeLinecap="round" fill="none"/>
-                {/* arms holding laptop from below */}
-                <path d="M-38 24Q-58 38-60 58" stroke="#F5C5A3" strokeWidth="18" strokeLinecap="round" fill="none"/>
-                <path d="M-38 24Q-58 38-60 58" stroke="#212121" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-                <path d="M38 24Q58 38 60 58" stroke="#F5C5A3" strokeWidth="18" strokeLinecap="round" fill="none"/>
-                <path d="M38 24Q58 38 60 58" stroke="#212121" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-                {/* laptop */}
-                <rect x="-52" y="46" width="104" height="62" rx="6" fill="#E2E8F0" stroke="#212121" strokeWidth="2"/>
-                <rect x="-47" y="50" width="94" height="50" rx="4" fill="#1E293B"/>
-                <rect x="-43" y="54" width="86" height="42" rx="2" fill="#7B86E2"/>
-                <rect x="-38" y="60" width="48" height="4" rx="2" fill="white" opacity="0.8"/>
-                <rect x="-38" y="68" width="32" height="3" rx="1.5" fill="white" opacity="0.5"/>
-                <rect x="-38" y="75" width="38" height="3" rx="1.5" fill="white" opacity="0.5"/>
-                <rect x="16" y="60" width="24" height="18" rx="3" fill="white" opacity="0.2"/>
-                <text x="18" y="73" fontSize="7" fill="white" fontWeight="bold">₹PAY</text>
-              </g>
-
-              {/* P5 — Woman, purple top, blonde hair, smiling, holding phone in right hand */}
-              <g transform="translate(260,258)">
-                <path d="M-38 18C-42 54-40 88-38 104L38 104C40 88 42 54 38 18C24 30 12 34 0 34C-12 34-24 30-38 18Z" fill="#9B7FE8" stroke="#212121" strokeWidth="2.2" strokeLinejoin="round"/>
-                <rect x="-8" y="5" width="16" height="16" rx="7" fill="#F5C5A3" stroke="#212121" strokeWidth="2"/>
-                <ellipse cx="0" cy="-22" rx="27" ry="29" fill="#F5C5A3" stroke="#212121" strokeWidth="2.5"/>
-                {/* blonde hair */}
-                <path d="M-27-30Q-25-56 0-58Q25-56 27-30Q21-44 0-46Q-21-44-27-30Z" fill="#F5C842" stroke="#212121" strokeWidth="1.5"/>
-                <path d="M-27-30Q-36 2-34 52" stroke="#F5C842" strokeWidth="16" strokeLinecap="round" fill="none"/>
-                <path d="M27-30Q36 2 34 52" stroke="#F5C842" strokeWidth="16" strokeLinecap="round" fill="none"/>
-                <ellipse cx="-27" cy="-22" rx="4" ry="5.5" fill="#F5C5A3" stroke="#212121" strokeWidth="1.8"/>
-                <ellipse cx="27" cy="-22" rx="4" ry="5.5" fill="#F5C5A3" stroke="#212121" strokeWidth="1.8"/>
-                <ellipse cx="-10" cy="-24" rx="4" ry="4.5" fill="#212121"/><circle cx="-8.5" cy="-25.5" r="1.5" fill="white"/>
-                <ellipse cx="10" cy="-24" rx="4" ry="4.5" fill="#212121"/><circle cx="11.5" cy="-25.5" r="1.5" fill="white"/>
-                <path d="M-16-32Q-10-36-4-32" stroke="#212121" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-                <path d="M4-32Q10-36 16-32" stroke="#212121" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-                {/* big smile */}
-                <path d="M-9-10Q0 0 9-10" stroke="#212121" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-                {/* right arm holding phone */}
-                <path d="M38 24Q52 36 52 60" stroke="#F5C5A3" strokeWidth="18" strokeLinecap="round" fill="none"/>
-                <path d="M38 24Q52 36 52 60" stroke="#212121" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-                <rect x="44" y="52" width="20" height="34" rx="4" fill="#374151" stroke="#212121" strokeWidth="2"/>
-                <rect x="47" y="56" width="14" height="22" rx="2" fill="#16A34A"/>
-                <rect x="50" y="60" width="8" height="2" rx="1" fill="white" opacity="0.7"/>
-                <rect x="50" y="65" width="6" height="2" rx="1" fill="white" opacity="0.5"/>
-                {/* left arm crosses body */}
-                <path d="M-38 24Q-26 46-8 52" stroke="#F5C5A3" strokeWidth="18" strokeLinecap="round" fill="none"/>
-                <path d="M-38 24Q-26 46-8 52" stroke="#212121" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-                <ellipse cx="-4" cy="56" rx="11" ry="7" fill="#F5C5A3" stroke="#212121" strokeWidth="2"/>
-              </g>
-
-              {/* P6 — Man, light-blue shirt, brown hair, holding dark tablet */}
-              <g transform="translate(432,258)">
-                <path d="M-38 18C-42 54-40 88-38 104L38 104C40 88 42 54 38 18C24 30 12 34 0 34C-12 34-24 30-38 18Z" fill="#93C5FD" stroke="#212121" strokeWidth="2.2" strokeLinejoin="round"/>
-                <rect x="-8" y="5" width="16" height="16" rx="7" fill="#FECBA1" stroke="#212121" strokeWidth="2"/>
-                <ellipse cx="0" cy="-22" rx="28" ry="30" fill="#FECBA1" stroke="#212121" strokeWidth="2.5"/>
-                {/* brown hair */}
-                <path d="M-28-28Q-26-56 0-58Q26-56 28-28Q22-42 0-44Q-22-42-28-28Z" fill="#92400E" stroke="#212121" strokeWidth="1.5"/>
-                <ellipse cx="-28" cy="-22" rx="4.5" ry="6" fill="#FECBA1" stroke="#212121" strokeWidth="1.8"/>
-                <ellipse cx="28" cy="-22" rx="4.5" ry="6" fill="#FECBA1" stroke="#212121" strokeWidth="1.8"/>
-                <ellipse cx="-10" cy="-24" rx="4" ry="4.5" fill="#212121"/><circle cx="-8.5" cy="-25.5" r="1.5" fill="white"/>
-                <ellipse cx="10" cy="-24" rx="4" ry="4.5" fill="#212121"/><circle cx="11.5" cy="-25.5" r="1.5" fill="white"/>
-                <path d="M-16-32Q-10-36-4-32" stroke="#212121" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-                <path d="M4-32Q10-36 16-32" stroke="#212121" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-                <path d="M-7-12Q0-5 7-12" stroke="#212121" strokeWidth="2" strokeLinecap="round" fill="none"/>
-                {/* both arms holding tablet */}
-                <path d="M-38 24Q-58 36-58 58" stroke="#FECBA1" strokeWidth="18" strokeLinecap="round" fill="none"/>
-                <path d="M-38 24Q-58 36-58 58" stroke="#212121" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-                <path d="M38 24Q58 36 58 58" stroke="#FECBA1" strokeWidth="18" strokeLinecap="round" fill="none"/>
-                <path d="M38 24Q58 36 58 58" stroke="#212121" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-                {/* dark tablet */}
-                <rect x="-52" y="46" width="104" height="66" rx="6" fill="#1E293B" stroke="#212121" strokeWidth="2"/>
-                <rect x="-47" y="50" width="94" height="54" rx="4" fill="#334155"/>
-                <rect x="-42" y="55" width="84" height="40" rx="2" fill="#E2E8F0"/>
-                <rect x="-36" y="61" width="52" height="4" rx="2" fill="#1E293B" opacity="0.4"/>
-                <rect x="-36" y="69" width="36" height="3" rx="1.5" fill="#1E293B" opacity="0.25"/>
-                <rect x="-36" y="76" width="42" height="3" rx="1.5" fill="#1E293B" opacity="0.25"/>
-                <rect x="22" y="61" width="18" height="14" rx="2" fill="#16A34A"/>
-                <text x="24" y="72" fontSize="7" fill="white" fontWeight="bold">✓</text>
-              </g>
-
-              {/* Decorative dots */}
-              <circle cx="176" cy="178" r="5" fill="#fed7aa"/>
-              <circle cx="164" cy="195" r="3.5" fill="#bbf7d0"/>
-              <circle cx="190" cy="190" r="2.5" fill="#fca5a5"/>
-              <circle cx="344" cy="178" r="4" fill="#c4b5fd"/>
-              <circle cx="358" cy="192" r="3" fill="#fed7aa"/>
-            </svg>
           </div>
         </div>
       </section>
