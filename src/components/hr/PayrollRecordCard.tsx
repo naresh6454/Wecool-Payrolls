@@ -340,7 +340,6 @@ export default function PayrollRecordCard({
                       {([
                         ["Present", rec.presentDays, "presentDays", "days"],
                         ["Weekly Off", rec.weeklyOffDays ?? 0, null, "days"],
-                        ["LOP", rec.lopDays, "lopDays", "days"],
                         ["Late", rec.lateCount, "lateCount", "times"],
                         ["OT", rec.overtimeDays, null, `days${Number(rec.overtimeAmount) > 0 ? ` · ₹${fmt(rec.overtimeAmount)}` : ""}`],
                       ] as [string, number, keyof EditFields | null, string][]).map(([l, v, key, u]) => (
@@ -352,6 +351,30 @@ export default function PayrollRecordCard({
                             : <span>{Number(v)} {u}</span>}
                         </div>
                       ))}
+                      {/* LOP row — shows full absent days with leave coverage breakdown */}
+                      <div className="flex justify-between items-start text-stone-400">
+                        <span>LOP</span>
+                        {isEditing ? (
+                          <input type="number" min="0" step="0.5" value={fields.lopDays} onChange={f("lopDays")}
+                            className="w-20 text-right px-2 py-0.5 border border-orange-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-200" />
+                        ) : (() => {
+                          const totalAbsent = Number(rec.absentDays);
+                          const actualLop = Number(rec.lopDays);
+                          const coveredByLeave = totalAbsent - actualLop;
+                          if (totalAbsent === 0) return <span>0 days</span>;
+                          if (coveredByLeave <= 0) return <span>{actualLop} days</span>;
+                          return (
+                            <div className="text-right">
+                              <span>{totalAbsent} days</span>
+                              {coveredByLeave === totalAbsent ? (
+                                <p className="text-xs text-blue-500">{coveredByLeave} covered by leave</p>
+                              ) : (
+                                <p className="text-xs text-blue-500">{coveredByLeave} covered · {actualLop} deducted</p>
+                              )}
+                            </div>
+                          );
+                        })()}
+                      </div>
                     </div>
                     {rec.leaveBalance !== null && (
                       <div className="mt-2 pt-2 border-t border-stone-100">
