@@ -273,7 +273,7 @@ export default function PayrollRecordCard({
                     {([
                       ["Present", rec.presentDays, "presentDays", "days"],
                       ["Weekly Off", rec.weeklyOffDays ?? 0, null, "days"],
-                      ["LOP", rec.absentDays, "lopDays", "days"],
+                      ["LOP", rec.lopDays, "lopDays", "days"],
                       ["Late", rec.lateCount, "lateCount", "times"],
                       ["OT", rec.overtimeDays, null, `days${Number(rec.overtimeAmount) > 0 ? ` · ₹${fmt(rec.overtimeAmount)}` : ""}`],
                     ] as [string, number, keyof EditFields | null, string][]).map(([l, v, key, u]) => (
