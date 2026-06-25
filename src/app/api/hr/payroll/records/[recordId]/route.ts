@@ -17,6 +17,7 @@ const manualEditSchema = z.object({
   presentDays: z.number().min(0),
   lopDays: z.number().min(0),
   lateCount: z.number().min(0),
+  weeklyOffDays: z.number().min(0).optional(),
   useLeaveBalance: z.boolean().optional(),
 });
 
@@ -100,6 +101,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ re
           lopDays: finalLopDays,
           paidLeaveDays: finalPaidLeaveDays,
           lateCount: body.lateCount,
+          ...(body.weeklyOffDays !== undefined ? { weeklyOffDays: body.weeklyOffDays } : {}),
           grossEarnings,
           totalDeductions,
           netSalary,
@@ -133,6 +135,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ re
         lopDays: Number(updated.lopDays),
         paidLeaveDays: Number(updated.paidLeaveDays),
         lateCount: Number(updated.lateCount),
+        weeklyOffDays: Number(updated.weeklyOffDays),
         grossEarnings: Number(updated.grossEarnings),
         totalDeductions: Number(updated.totalDeductions),
         netSalary: Number(updated.netSalary),

@@ -48,7 +48,7 @@ type EditFields = {
   basicSalary: string; hra: string; conveyance: string; bonus: string;
   specialAllowance: string; overtimeAmount: string; overtimeDays: string;
   professionalTax: string; lopDeduction: string; lateDeduction: string;
-  presentDays: string; lopDays: string; lateCount: string;
+  presentDays: string; lopDays: string; lateCount: string; weeklyOffDays: string;
 };
 
 interface Props {
@@ -100,6 +100,7 @@ export default function PayrollRecordCard({
     presentDays: String(Number(rec.presentDays)),
     lopDays: String(Number(rec.lopDays) + Number(rec.paidLeaveDays)),
     lateCount: String(Number(rec.lateCount)),
+    weeklyOffDays: String(Number(rec.weeklyOffDays)),
   });
 
   const [isEditing, setIsEditing] = useState(false);
@@ -158,6 +159,20 @@ export default function PayrollRecordCard({
       if (key === "lopDays") {
         const lop = parseFloat(val) || 0;
         next.lopDeduction = String(Math.round(lop * perDay * 100) / 100);
+      }
+      if (key === "lopDeduction") {
+        // direct deduction edit — back-calc lopDays
+        const ded = parseFloat(val) || 0;
+        next.lopDays = String(perDay > 0 ? Math.round((ded / perDay) * 100) / 100 : 0);
+      }
+      if (key === "weeklyOffDays") {
+        const newWo = parseFloat(val) || 0;
+        const oldWo = parseFloat(prev.weeklyOffDays) || 0;
+        const delta = oldWo - newWo; // decrease WO → more LOP; increase WO → less LOP
+        const currentLop = parseFloat(prev.lopDays) || 0;
+        const newLop = Math.max(0, currentLop + delta);
+        next.lopDays = String(newLop);
+        next.lopDeduction = String(Math.round(newLop * perDay * 100) / 100);
       }
       if (key === "overtimeDays") {
         const days = parseFloat(val) || 0;
@@ -328,9 +343,7 @@ export default function PayrollRecordCard({
                     ))}
                     <div className="flex justify-between items-center">
                       <span className="text-stone-500">Overtime</span>
-                      <span className="font-medium text-stone-800">
-                        ₹{fmt(isEditing ? parseFloat(fields.overtimeAmount) || 0 : rec.overtimeAmount)}
-                      </span>
+                      {isEditing ? editInput("overtimeAmount") : <span className="font-medium text-stone-800">₹{fmt(rec.overtimeAmount)}</span>}
                     </div>
                     <div className="flex justify-between pt-1 border-t border-stone-100 font-bold">
                       <span className="text-stone-700">Gross</span>
@@ -355,20 +368,18 @@ export default function PayrollRecordCard({
                     ))}
                     <div className="flex justify-between items-center">
                       <span className="text-stone-500">LOP Deduction</span>
-                      <span className="font-medium text-red-500">
-                        -₹{fmt(isEditing ? parseFloat(fields.lopDeduction) || 0 : rec.lopDeduction)}
-                      </span>
+                      {isEditing ? editInput("lopDeduction") : <span className="font-medium text-red-500">-₹{fmt(rec.lopDeduction)}</span>}
                     </div>
                     <div className="pt-1 border-t border-stone-100 space-y-1">
                       {([
                         ["Present", rec.presentDays, "presentDays", "days"],
-                        ["Weekly Off", rec.weeklyOffDays ?? 0, null, "days"],
+                        ["Weekly Off", rec.weeklyOffDays ?? 0, "weeklyOffDays", "days"],
                         ["Late", rec.lateCount, "lateCount", "times"],
                         ["OT", rec.overtimeDays, "overtimeDays", `days${Number(rec.overtimeAmount) > 0 ? ` · ₹${fmt(rec.overtimeAmount)}` : ""}`],
-                      ] as [string, number, keyof EditFields | null, string][]).map(([l, v, key, u]) => (
+                      ] as [string, number, keyof EditFields, string][]).map(([l, v, key, u]) => (
                         <div key={l} className="flex justify-between items-center text-stone-600 text-sm">
                           <span>{l}</span>
-                          {isEditing && key
+                          {isEditing
                             ? <input type="number" min="0" step="0.5" value={fields[key]} onChange={f(key)}
                                 className="w-20 text-right px-2 py-0.5 border border-orange-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-200" />
                             : <span className="font-medium">{Number(v)} {u}</span>}
