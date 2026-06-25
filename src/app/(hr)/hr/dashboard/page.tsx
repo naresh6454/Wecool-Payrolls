@@ -82,30 +82,44 @@ export default async function HRDashboard() {
           <CardBody>
             {latestPayrollRun ? (
               <>
-                <div className="flex items-center gap-1 mb-5 overflow-x-auto pb-1">
-                  {payrollSteps.map((step, i) => {
-                    const done = i < currentStep;
-                    const active = i === currentStep;
-                    return (
-                      <div key={step} className="flex items-center flex-1">
-                        <div className="flex flex-col items-center flex-1">
-                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all ${
-                            done ? "bg-green-500 border-green-500 text-white"
-                                 : active ? "bg-orange-500 border-orange-500 text-white"
-                                 : "bg-white border-stone-200 text-stone-400"
-                          }`}>
-                            {done ? "✓" : i + 1}
+                <div className="mb-5 overflow-x-auto pb-1">
+                  {/* Circles row */}
+                  <div className="flex items-center">
+                    {payrollSteps.map((step, i) => {
+                      const done = i < currentStep;
+                      const active = i === currentStep;
+                      return (
+                        <div key={step} className="flex items-center flex-1">
+                          <div className="flex justify-center flex-1">
+                            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all flex-shrink-0 ${
+                              done ? "bg-green-500 border-green-500 text-white"
+                                   : active ? "bg-orange-500 border-orange-500 text-white"
+                                   : "bg-white border-stone-200 text-stone-400"
+                            }`}>
+                              {done ? "✓" : i + 1}
+                            </div>
                           </div>
-                          <span className={`text-[9px] mt-1 text-center font-medium ${
+                          {i < payrollSteps.length - 1 && (
+                            <div className={`h-0.5 flex-1 ${done ? "bg-green-400" : "bg-stone-200"}`} />
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {/* Labels row */}
+                  <div className="flex items-start mt-1">
+                    {payrollSteps.map((step, i) => {
+                      const done = i < currentStep;
+                      const active = i === currentStep;
+                      return (
+                        <div key={step} className="flex-1 flex justify-center">
+                          <span className={`text-[9px] text-center font-medium leading-tight ${
                             done ? "text-green-600" : active ? "text-orange-600" : "text-stone-400"
                           }`}>{step}</span>
                         </div>
-                        {i < payrollSteps.length - 1 && (
-                          <div className={`h-0.5 flex-1 -mt-3 ${done ? "bg-green-400" : "bg-stone-200"}`} />
-                        )}
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
                 <div className="bg-stone-50 rounded-xl p-4 text-sm space-y-2 border border-stone-100">
                   <div className="flex justify-between">
