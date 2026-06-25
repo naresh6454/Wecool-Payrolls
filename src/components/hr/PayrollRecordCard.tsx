@@ -358,9 +358,9 @@ export default function PayrollRecordCard({
                           <input type="number" min="0" step="0.5" value={fields.lopDays} onChange={f("lopDays")}
                             className="w-20 text-right px-2 py-0.5 border border-orange-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-200" />
                         ) : (() => {
-                          const totalAbsent = Number(rec.absentDays);
                           const actualLop = Number(rec.lopDays);
-                          const coveredByLeave = totalAbsent - actualLop;
+                          const coveredByLeave = Number(rec.paidLeaveDays);
+                          const totalAbsent = actualLop + coveredByLeave;
                           if (totalAbsent === 0) return <span className="font-medium">0 days</span>;
                           if (coveredByLeave <= 0) return <span className="font-medium">{actualLop} days</span>;
                           return (
