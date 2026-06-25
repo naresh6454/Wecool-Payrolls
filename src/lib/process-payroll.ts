@@ -204,9 +204,11 @@ export async function runPayrollProcessing(uploadId: string, initiatorId: string
       emp.employeeType as "OFFICE" | "WAREHOUSE", settings.minOtHoursForExtraPay
     );
 
-    const availableBalance = leaveBalance
+    const rawAvailableBalance = leaveBalance
       ? Math.max(0, Number(leaveBalance.totalAllocated) - Number(leaveBalance.used))
       : 0;
+    // Floor to nearest 0.5 — only whole or half days can be used to cover LOP
+    const availableBalance = Math.floor(rawAvailableBalance * 2) / 2;
     const lopCandidates = rawSummary.lopDays;
     const daysToConvertFromBalance = Math.min(lopCandidates, availableBalance);
 
