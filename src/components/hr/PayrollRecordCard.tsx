@@ -109,9 +109,10 @@ export default function PayrollRecordCard({
   const [showLeaveDialog, setShowLeaveDialog] = useState(false);
   const [pendingFields, setPendingFields] = useState<EditFields | null>(null);
 
+  const liveOtAmount = isWarehouse ? otTotal : (parseFloat(fields.overtimeAmount) || 0);
   const liveGross = (parseFloat(fields.basicSalary) || 0) + (parseFloat(fields.hra) || 0) +
     (parseFloat(fields.conveyance) || 0) + (parseFloat(fields.bonus) || 0) +
-    (parseFloat(fields.specialAllowance) || 0) + (parseFloat(fields.overtimeAmount) || 0);
+    (parseFloat(fields.specialAllowance) || 0) + liveOtAmount;
   const liveDed = (parseFloat(fields.professionalTax) || 0) + (parseFloat(fields.lopDeduction) || 0) +
     (parseFloat(fields.lateDeduction) || 0);
   const adjDelta = rec.manualAdjustments.reduce((sum, a) => a.adjustmentType === "ADDITION" ? sum + Number(a.amount) : sum - Number(a.amount), 0);
@@ -343,7 +344,9 @@ export default function PayrollRecordCard({
                     ))}
                     <div className="flex justify-between items-center">
                       <span className="text-stone-500">Overtime</span>
-                      {isEditing ? editInput("overtimeAmount") : <span className="font-medium text-stone-800">₹{fmt(rec.overtimeAmount)}</span>}
+                      {isEditing
+                        ? editInput("overtimeAmount")
+                        : <span className="font-medium text-stone-800">₹{fmt(isWarehouse ? otTotal : rec.overtimeAmount)}</span>}
                     </div>
                     <div className="flex justify-between pt-1 border-t border-stone-100 font-bold">
                       <span className="text-stone-700">Gross</span>
@@ -375,7 +378,7 @@ export default function PayrollRecordCard({
                         ["Present", rec.presentDays, "presentDays", "days"],
                         ["Weekly Off", rec.weeklyOffDays ?? 0, "weeklyOffDays", "days"],
                         ["Late", rec.lateCount, "lateCount", "times"],
-                        ["OT", rec.overtimeDays, "overtimeDays", `days${Number(rec.overtimeAmount) > 0 ? ` · ₹${fmt(rec.overtimeAmount)}` : ""}`],
+                        ["OT", isWarehouse ? (parseFloat(ot.days || "0") || 0) : rec.overtimeDays, "overtimeDays", `days${(isWarehouse ? otTotal : Number(rec.overtimeAmount)) > 0 ? ` · ₹${fmt(isWarehouse ? otTotal : rec.overtimeAmount)}` : ""}`],
                       ] as [string, number, keyof EditFields, string][]).map(([l, v, key, u]) => (
                         <div key={l} className="flex justify-between items-center text-stone-600 text-sm">
                           <span>{l}</span>
