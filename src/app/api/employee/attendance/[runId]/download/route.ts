@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import * as XLSX from "xlsx";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ runId: string }> }) {
   try {
@@ -22,7 +23,32 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ run
       return NextResponse.json({ error: "Attendance file not found" }, { status: 404 });
     }
 
-    const blob = new Blob([new Uint8Array(run.upload.fileContent)], {
+    // Fetch employee code to filter rows
+    const employee = await prisma.employee.findUnique({
+      where: { id: session.employeeId },
+      select: { employeeCode: true },
+    });
+
+    // Parse and filter the Excel to only this employee's rows
+    const buffer = Buffer.from(run.upload.fileContent);
+    const workbook = XLSX.read(buffer, { type: "buffer" });
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
+    const rows: Record<string, unknown>[] = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+
+    const empCode = employee?.employeeCode ?? "";
+    const filtered = rows.filter((row) => {
+      const id = String(row["employee_id"] ?? row["Employee ID"] ?? row["emp_id"] ?? "").trim();
+      return id === empCode;
+    });
+
+    // Build new workbook with header + filtered rows
+    const newWb = XLSX.utils.book_new();
+    const newSheet = XLSX.utils.json_to_sheet(filtered);
+    XLSX.utils.book_append_sheet(newWb, newSheet, sheetName);
+    const outBuffer = XLSX.write(newWb, { type: "buffer", bookType: "xlsx" });
+
+    const blob = new Blob([outBuffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
 
@@ -31,7 +57,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ run
       headers: {
         "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         "Content-Disposition": `attachment; filename="${run.upload.fileName}"`,
-        "Content-Length": String(run.upload.fileContent.length),
+        "Content-Length": String(outBuffer.length),
       },
     });
   } catch (e) {

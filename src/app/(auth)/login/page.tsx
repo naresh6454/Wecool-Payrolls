@@ -117,6 +117,11 @@ export default function LoginPage() {
                 </button>
               </div>
               {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
+              <div className="text-right mt-1">
+                <Link href="/forgot-password" className="text-xs text-orange-500 hover:text-orange-600 font-medium">
+                  Forgot password?
+                </Link>
+              </div>
             </div>
 
             <Button type="submit" loading={isSubmitting} className="w-full py-2.5 text-sm" size="lg">
