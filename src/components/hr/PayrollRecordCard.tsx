@@ -97,7 +97,7 @@ export default function PayrollRecordCard({
     lopDeduction: String(Number(rec.lopDeduction)),
     lateDeduction: String(Number(rec.lateDeduction)),
     presentDays: String(Number(rec.presentDays)),
-    lopDays: String(Number(rec.lopDays)),
+    lopDays: String(Number(rec.lopDays) + Number(rec.paidLeaveDays)),
     lateCount: String(Number(rec.lateCount)),
   });
 
