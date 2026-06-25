@@ -29,10 +29,16 @@ export default async function RootPage() {
               <p className="text-orange-500 text-[10px] font-bold tracking-widest uppercase">Payroll System</p>
             </div>
           </div>
-          <Link href="/login"
-            className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-orange-200">
-            Login →
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link href="/register"
+              className="px-5 py-2.5 border border-orange-500 text-orange-500 hover:bg-orange-50 text-sm font-bold rounded-xl transition-all">
+              Register
+            </Link>
+            <Link href="/login"
+              className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-orange-200">
+              Login →
+            </Link>
+          </div>
         </div>
       </nav>
 
