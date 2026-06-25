@@ -12,7 +12,15 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Wecool Payroll",
   description: "Smart Payroll Management System",
-  icons: { icon: "/favicon.ico" },
+  icons: {
+    icon: [{ url: "/favicon.ico", sizes: "32x32" }],
+    apple: [{ url: "/apple-icon.png", sizes: "180x180" }],
+  },
+  openGraph: {
+    title: "Wecool Payroll",
+    description: "Smart Payroll Management System",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
