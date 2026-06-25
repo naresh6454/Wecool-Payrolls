@@ -60,7 +60,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ re
         });
 
         if (lb) {
-          const available = Math.max(0, Number(lb.totalAllocated) - Number(lb.used));
+          const rawAvailable = Math.max(0, Number(lb.totalAllocated) - Number(lb.used));
+          const available = Math.floor(rawAvailable * 2) / 2;
           const daysToConvert = Math.min(finalLopDays, available);
 
           if (daysToConvert > 0) {
