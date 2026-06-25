@@ -46,37 +46,53 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ re
       });
       if (!record) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-      let finalLopDays = body.lopDays;
+      // body.lopDays = total absent days (includes existing paidLeaveDays coverage)
+      const newTotalAbsent = body.lopDays;
+      const existingPaidLeaveDays = Number(record.paidLeaveDays);
+      const perDay = Number(record.perDaySalary);
+
+      let finalPaidLeaveDays = existingPaidLeaveDays;
+      let finalLopDays = newTotalAbsent;
       let finalLopDeduction = body.lopDeduction;
-      let finalPaidLeaveDays = Number(record.paidLeaveDays);
 
-      // If HR chose to use leave balance, convert as much LOP as possible to paid leave
-      if (body.useLeaveBalance) {
-        const payrollRun = await prisma.payrollRun.findUnique({
-          where: { id: record.payrollRunId },
-          select: { periodEnd: true },
-        });
-        const leaveYear = new Date(payrollRun!.periodEnd).getFullYear();
-        const lb = await prisma.leaveBalance.findFirst({
-          where: { employeeId: record.employeeId, year: leaveYear, leaveType: "LEAVE" },
-        });
+      // Fetch leave balance once — needed for both increase and refund cases
+      const payrollRun = await prisma.payrollRun.findUnique({
+        where: { id: record.payrollRunId },
+        select: { periodEnd: true },
+      });
+      const leaveYear = new Date(payrollRun!.periodEnd).getFullYear();
+      const lb = await prisma.leaveBalance.findFirst({
+        where: { employeeId: record.employeeId, year: leaveYear, leaveType: "LEAVE" },
+      });
 
-        if (lb) {
-          const rawAvailable = Math.max(0, Number(lb.totalAllocated) - Number(lb.used));
-          const available = Math.floor(rawAvailable * 2) / 2;
-          const daysToConvert = Math.min(finalLopDays, available);
+      if (body.useLeaveBalance && lb) {
+        // HR chose to cover new LOP days with leave balance.
+        // Only debit the NET NEW days beyond what's already covered.
+        const rawAvailable = Math.max(0, Number(lb.totalAllocated) - Number(lb.used));
+        const available = Math.floor(rawAvailable * 2) / 2;
+        const maxCoverable = existingPaidLeaveDays + available;
+        const newPaidLeave = Math.floor(Math.min(newTotalAbsent, maxCoverable) * 2) / 2;
+        const netChange = newPaidLeave - existingPaidLeaveDays; // positive=debit, negative=refund
 
-          if (daysToConvert > 0) {
-            finalPaidLeaveDays += daysToConvert;
-            finalLopDays = Math.max(0, finalLopDays - daysToConvert);
-            const perDay = Number(record.perDaySalary);
-            finalLopDeduction = Math.round(finalLopDays * perDay * 100) / 100;
+        finalPaidLeaveDays = newPaidLeave;
+        finalLopDays = Math.max(0, newTotalAbsent - finalPaidLeaveDays);
+        finalLopDeduction = Math.round(finalLopDays * perDay * 100) / 100;
 
-            await prisma.leaveBalance.update({
-              where: { id: lb.id },
-              data: { used: { increment: daysToConvert } },
-            });
-          }
+        if (netChange !== 0) {
+          await prisma.leaveBalance.update({ where: { id: lb.id }, data: { used: { increment: netChange } } });
+        }
+      } else {
+        // Not using leave for new days. Keep existing coverage but cap it at new total.
+        // If LOP was reduced, refund the removed covered days.
+        const newPaidLeave = Math.min(existingPaidLeaveDays, newTotalAbsent);
+        const refund = existingPaidLeaveDays - newPaidLeave;
+
+        finalPaidLeaveDays = newPaidLeave;
+        finalLopDays = Math.max(0, newTotalAbsent - finalPaidLeaveDays);
+        finalLopDeduction = Math.round(finalLopDays * perDay * 100) / 100;
+
+        if (refund > 0 && lb) {
+          await prisma.leaveBalance.update({ where: { id: lb.id }, data: { used: { decrement: refund } } });
         }
       }
 
@@ -110,13 +126,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ re
       });
 
       // Fetch updated leave balance so the UI can reflect changes
-      const payrollRun2 = await prisma.payrollRun.findUnique({
-        where: { id: record.payrollRunId },
-        select: { periodEnd: true },
-      });
-      const leaveYear2 = new Date(payrollRun2!.periodEnd).getFullYear();
       const updatedLb = await prisma.leaveBalance.findFirst({
-        where: { employeeId: record.employeeId, year: leaveYear2, leaveType: "LEAVE" },
+        where: { employeeId: record.employeeId, year: leaveYear, leaveType: "LEAVE" },
         select: { totalAllocated: true, used: true },
       });
 
