@@ -135,7 +135,42 @@ export function buildAttendanceSummary(
   let absentDays = 0;
   let weekOffWorkedDays = 0;
   let holidayWorkedDays = 0;
-  let highOtDays = 0;
+
+  if (employeeType === "WAREHOUSE") {
+    // Warehouse employees work on rotational shifts — they may punch on calendar W/O or holiday days.
+    // Present = total punch count across ALL days (W/O, holiday, working day — doesn't matter).
+    // W/O and holidays are counted from calendar for display and to derive working days.
+    // LOP = (calendarDays - weeklyOffDays - holidayDays) - presentDays - paidLeaveDays
+    for (const r of records) {
+      const calType = r.calendarDayType;
+      const isWeeklyOff = calType === "WEEKLY_OFF";
+      const isHoliday = calType === "COMPANY_HOLIDAY";
+
+      if (isWeeklyOff) weeklyOffDays += 1;
+      else if (isHoliday) holidayDays += 1;
+
+      if (r.checkIn) presentDays += 1;
+      if (r.isLate) lateCount += 1;
+    }
+
+    const workingDays = calendarDays - weeklyOffDays - holidayDays;
+    const lopDays = Math.max(0, workingDays - presentDays - paidLeaveDays);
+
+    return {
+      presentDays,
+      absentDays: lopDays,
+      halfDays: 0,
+      weeklyOffDays,
+      holidayDays,
+      weekOffWorkedDays: 0,
+      holidayWorkedDays: 0,
+      lateCount,
+      paidLeaveDays,
+      lopDays,
+      overtimeDays: 0,
+      totalCalendarDays: calendarDays,
+    };
+  }
 
   for (const r of records) {
     const calType = r.calendarDayType; // calendar is source of truth when present
@@ -174,13 +209,9 @@ export function buildAttendanceSummary(
   }
 
   // Office OT: any check-in on WO or Holiday day = 1 full OT day (hours don't matter)
-  // Warehouse OT: always 0 — entered manually by HR during review
-  const overtimeDays = employeeType === "OFFICE"
-    ? weekOffWorkedDays + holidayWorkedDays
-    : 0;
+  const overtimeDays = weekOffWorkedDays + holidayWorkedDays;
 
   // Paid days = present (includes 0.5 per half-day) + approved paid leaves + week-offs + holidays
-  // Week-offs and holidays are paid — they do NOT cause LOP
   const paidDays = presentDays + paidLeaveDays + weeklyOffDays + holidayDays;
   const lopDays = Math.max(0, calendarDays - paidDays);
 
