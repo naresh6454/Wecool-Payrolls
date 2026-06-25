@@ -52,6 +52,7 @@ const schema = z.object({
   bankName: z.string().optional(),
   ifscCode: z.string().optional(),
   address: z.string().optional(),
+  biometricId: z.string().optional(),
 });
 
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -135,6 +136,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         bankName: data.bankName || null,
         ifscCode: data.ifscCode || null,
         address: data.address || null,
+        biometricId: data.biometricId?.trim() || null,
       },
     });
 

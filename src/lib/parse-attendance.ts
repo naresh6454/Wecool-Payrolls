@@ -181,17 +181,127 @@ export function parseSimpleFormat(
   return { errors, warnings, validRows };
 }
 
+export function isBiometricFormat(rows: unknown[][]): boolean {
+  // Biometric report has "Attendance Record Report" somewhere in row 0
+  const firstRow = (rows[0] as unknown[]).map(c => String(c || "").trim());
+  return firstRow.some(c => c.includes("Attendance Record Report"));
+}
+
+function extractTimesFromCell(cell: string): { checkIn: string | null; checkOut: string | null } {
+  const matches = cell.match(/\d{2}:\d{2}/g);
+  if (!matches || matches.length === 0) return { checkIn: null, checkOut: null };
+  const unique = [...new Set(matches)];
+  if (unique.length === 1) return { checkIn: unique[0], checkOut: null };
+  return { checkIn: unique[0], checkOut: unique[unique.length - 1] };
+}
+
+export function parseBiometricFormat(
+  rows: unknown[][],
+  bioMap: Map<string, string>,
+  payrollYear: number,
+  payrollMonth: number,
+): { errors: Array<{ row: number; field: string; message: string }>; warnings: string[]; validRows: ParsedRow[] } {
+  const warnings: string[] = [];
+  const validRows: ParsedRow[] = [];
+
+  // Row 3 (index 3) has the day numbers across columns
+  const dayRow = rows[3] as unknown[];
+  // Columns 0..17 = Dec dates, Columns 18..30 = Jan dates (or current month)
+  // Build date map: colIndex -> Date
+  const dateByCol: (Date | null)[] = [];
+  let prevDay = -1;
+  let currentMonth = payrollMonth - 1; // start one month before
+
+  for (let col = 0; col < dayRow.length; col++) {
+    const day = Number(dayRow[col]);
+    if (!day || isNaN(day)) { dateByCol.push(null); continue; }
+    if (prevDay > 0 && day < prevDay) currentMonth = payrollMonth;
+    const year = currentMonth <= 0 ? payrollYear - 1 : payrollYear;
+    const month = currentMonth <= 0 ? 12 : currentMonth;
+    dateByCol.push(new Date(`${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}T00:00:00.000Z`));
+    prevDay = day;
+  }
+
+  // Each employee occupies 2 rows: info row (name/ID) + punch row
+  for (let i = 4; i < rows.length; i += 2) {
+    const infoRow = rows[i] as unknown[];
+    const punchRow = rows[i + 1] as unknown[] | undefined;
+    if (!punchRow) break;
+
+    // Bio ID is in col 0 of info row
+    const bioId = String(infoRow[0] || "").trim();
+    if (!bioId || isNaN(Number(bioId))) continue;
+
+    const empDbId = bioMap.get(bioId);
+    if (!empDbId) {
+      // Find name from info row
+      const name = String(infoRow[8] || infoRow[7] || "").trim();
+      warnings.push(`Biometric ID ${bioId} (${name}) not mapped to any employee — skipped`);
+      continue;
+    }
+
+    for (let col = 0; col < dateByCol.length; col++) {
+      const date = dateByCol[col];
+      if (!date) continue;
+
+      // Only include dates in the payroll month
+      if (date.getMonth() + 1 !== payrollMonth || date.getFullYear() !== payrollYear) continue;
+
+      const cellVal = String(punchRow[col] || "").trim();
+      if (!cellVal) {
+        // Absent
+        validRows.push({
+          employeeId: empDbId, date,
+          checkIn: null, checkOut: null,
+          status: "ABSENT", workingHours: null,
+          overtimeHours: 0, isLate: false, lateMinutes: 0,
+        });
+        continue;
+      }
+
+      const { checkIn, checkOut } = extractTimesFromCell(cellVal);
+
+      let workingHours: number | null = null;
+      if (checkIn && checkOut) {
+        const [ih, im] = checkIn.split(":").map(Number);
+        const [oh, om] = checkOut.split(":").map(Number);
+        workingHours = Math.round(((oh * 60 + om) - (ih * 60 + im)) / 60 * 100) / 100;
+      }
+
+      let isLate = false;
+      let lateMinutes = 0;
+      if (checkIn) {
+        const [h, m] = checkIn.split(":").map(Number);
+        const totalMins = h * 60 + m;
+        if (totalMins > 9 * 60 + 10) { isLate = true; lateMinutes = totalMins - 9 * 60; }
+      }
+
+      validRows.push({
+        employeeId: empDbId, date,
+        checkIn, checkOut,
+        status: "PRESENT", workingHours,
+        overtimeHours: 0, isLate, lateMinutes,
+      });
+    }
+  }
+
+  return { errors: [], warnings, validRows };
+}
+
 export function parseAttendanceBuffer(
   buffer: Buffer,
   empMap: Map<string, string>,
   payrollYear: number,
   payrollMonth: number,
+  bioMap?: Map<string, string>,
 ): { errors: Array<{ row: number; field: string; message: string }>; warnings: string[]; validRows: ParsedRow[] } {
   const workbook = XLSX.read(buffer, { type: "buffer" });
   const sheet = workbook.Sheets[workbook.SheetNames[0]];
   const rawRows = XLSX.utils.sheet_to_json<unknown[]>(sheet, { header: 1, defval: "" }) as unknown[][];
 
-  if (isDeviceFormat(rawRows)) {
+  if (isBiometricFormat(rawRows)) {
+    return parseBiometricFormat(rawRows, bioMap ?? new Map(), payrollYear, payrollMonth);
+  } else if (isDeviceFormat(rawRows)) {
     return parseDeviceFormat(rawRows, empMap, payrollYear, payrollMonth);
   } else {
     const simpleRows = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet, { defval: "" });

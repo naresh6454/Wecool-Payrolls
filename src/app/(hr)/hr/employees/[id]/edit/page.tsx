@@ -14,7 +14,7 @@ interface Designation { id: string; name: string; departmentId: string | null; }
 const EMPTY_FORM: EmployeeFormData = {
   employeeCode: "", firstName: "", lastName: "", email: "", phone: "",
   employeeType: "OFFICE", dateOfJoining: "", gender: "",
-  monthlySalary: "", departmentId: "", designationId: "", bankAccountNo: "",
+  monthlySalary: "", departmentId: "", designationId: "", bankAccountNo: "", biometricId: "",
 };
 
 export default function EditEmployeePage() {
@@ -48,6 +48,7 @@ export default function EditEmployeePage() {
         departmentId: emp.departmentId || "",
         designationId: emp.designationId || "",
         bankAccountNo: emp.bankAccountNo || "",
+        biometricId: emp.biometricId || "",
       });
       if (emp.leaveBalance) setLeaveBalance(String(Number(emp.leaveBalance.totalAllocated)));
       setLoading(false);

@@ -16,6 +16,7 @@ export interface EmployeeFormData {
   departmentId: string;
   designationId: string;
   bankAccountNo: string;
+  biometricId?: string;
   password?: string;
 }
 
@@ -148,6 +149,19 @@ export default function EmployeeFormFields({ form, setForm, departments, designa
             <label className="block text-xs font-semibold text-stone-500 mb-1.5">Date of Joining <span className="text-red-400">*</span></label>
             <input type="date" value={form.dateOfJoining} onChange={e => set("dateOfJoining", e.target.value)} className={INPUT} />
           </div>
+
+          {form.employeeType === "WAREHOUSE" && (
+            <div>
+              <label className="block text-xs font-semibold text-stone-500 mb-1.5">Biometric ID</label>
+              <input
+                value={form.biometricId ?? ""}
+                onChange={e => set("biometricId", e.target.value)}
+                className={INPUT}
+                placeholder="e.g. 2, 41, 101"
+              />
+              <p className="text-xs text-stone-400 mt-1">ID shown in the biometric attendance report for this employee</p>
+            </div>
+          )}
 
           <div>
             <label className="block text-xs font-semibold text-stone-500 mb-1.5">Monthly Salary (₹) <span className="text-red-400">*</span></label>

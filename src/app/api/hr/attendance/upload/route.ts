@@ -20,8 +20,13 @@ export async function POST(req: NextRequest) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    const employees = await prisma.employee.findMany({ select: { id: true, employeeCode: true } });
+    const employees = await prisma.employee.findMany({ select: { id: true, employeeCode: true, biometricId: true } });
     const empMap = new Map(employees.map(e => [e.employeeCode.trim(), e.id]));
+    const bioMap = new Map(
+      employees
+        .filter(e => e.biometricId)
+        .map(e => [e.biometricId!.trim(), e.id])
+    );
 
     const now = new Date();
     const payrollYear = Number(formData.get("periodYear") || now.getFullYear());
@@ -31,9 +36,11 @@ export async function POST(req: NextRequest) {
     const workbook = XLSX.read(buffer, { type: "buffer" });
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
     const rawRows = XLSX.utils.sheet_to_json<unknown[]>(sheet, { header: 1, defval: "" }) as unknown[][];
-    const deviceFmt = isDeviceFormat(rawRows);
+    const { isBiometricFormat: checkBio } = await import("@/lib/parse-attendance");
+    const bioFmt = checkBio(rawRows);
+    const deviceFmt = !bioFmt && isDeviceFormat(rawRows);
 
-    const { errors, warnings, validRows } = parseAttendanceBuffer(buffer, empMap, payrollYear, payrollMonth);
+    const { errors, warnings, validRows } = parseAttendanceBuffer(buffer, empMap, payrollYear, payrollMonth, bioMap);
 
     const dates = validRows.map(r => r.date).filter(Boolean);
     const periodStart = dates.length ? new Date(Math.min(...dates.map(d => d.getTime()))) : new Date();
@@ -139,7 +146,7 @@ export async function POST(req: NextRequest) {
     await createAuditLog({
       actorId: session.userId, actorRole: "HR", action: "ATTENDANCE_UPLOAD",
       entityType: "attendance_upload", entityId: upload.id,
-      description: `HR uploaded attendance for ${payrollMonthStr} (${deviceFmt ? "device" : "simple"} format). ${validRows.length} records, ${errors.length} errors, ${warnings.length} warnings.`,
+      description: `HR uploaded attendance for ${payrollMonthStr} (${bioFmt ? "biometric" : deviceFmt ? "device" : "simple"} format). ${validRows.length} records, ${errors.length} errors, ${warnings.length} warnings.`,
     });
 
     return NextResponse.json({
@@ -151,7 +158,7 @@ export async function POST(req: NextRequest) {
       payrollMonth: payrollMonthStr,
       periodStart: periodStart.toISOString().split("T")[0],
       periodEnd: periodEnd.toISOString().split("T")[0],
-      format: deviceFmt ? "device" : "simple",
+      format: bioFmt ? "biometric" : deviceFmt ? "device" : "simple",
       payrollRunId,
     });
 
