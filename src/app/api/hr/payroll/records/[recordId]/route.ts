@@ -100,6 +100,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ re
           grossEarnings,
           totalDeductions,
           netSalary,
+          status: "DRAFT",
         },
       });
 
@@ -131,6 +132,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ re
         grossEarnings: Number(updated.grossEarnings),
         totalDeductions: Number(updated.totalDeductions),
         netSalary: Number(updated.netSalary),
+        status: "DRAFT",
         leaveBalance: updatedLb
           ? { totalAllocated: Number(updatedLb.totalAllocated), used: Number(updatedLb.used) }
           : null,

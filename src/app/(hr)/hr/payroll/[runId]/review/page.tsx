@@ -178,7 +178,7 @@ export default function PayrollReviewPage() {
   if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="w-8 h-8 text-orange-400 animate-spin" /></div>;
   if (!run) return <div className="p-6 text-stone-500">Payroll run not found</div>;
 
-  const allApproved = (run.payrollRecords ?? []).every(r => r.status === "APPROVED");
+  const allApproved = (run.payrollRecords ?? []).every(r => r.status !== "DRAFT");
 
   return (
     <div>
@@ -201,7 +201,7 @@ export default function PayrollReviewPage() {
 
       {!allApproved && (
         <div className="mb-4 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-700 font-medium">
-          Approve all employee records before generating payslips
+          Review all employee records (Approve or Reject) before generating payslips
         </div>
       )}
 
