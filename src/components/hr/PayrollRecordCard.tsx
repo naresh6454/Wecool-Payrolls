@@ -158,8 +158,11 @@ export default function PayrollRecordCard({
     setFields(prev => {
       const next = { ...prev, [key]: val };
       if (key === "lopDays") {
-        const lop = parseFloat(val) || 0;
-        next.lopDeduction = String(Math.round(lop * perDay * 100) / 100);
+        const newLop = parseFloat(val) || 0;
+        const oldLop = parseFloat(prev.lopDays) || 0;
+        const delta = oldLop - newLop; // LOP decreases → present increases, and vice versa
+        next.presentDays = String(Math.max(0, (parseFloat(prev.presentDays) || 0) + delta));
+        next.lopDeduction = String(Math.round(newLop * perDay * 100) / 100);
       }
       if (key === "lopDeduction") {
         // direct deduction edit — back-calc lopDays
