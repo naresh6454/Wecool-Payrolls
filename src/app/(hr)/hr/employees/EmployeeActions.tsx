@@ -55,7 +55,10 @@ export default function EmployeeActions({ userId, status, employeeId, isActive }
       body: JSON.stringify({ status: "APPROVED" }),
     });
     if (res.ok) { toast.success("Employee approved"); router.refresh(); }
-    else toast.error("Failed");
+    else {
+      const d = await res.json().catch(() => ({}));
+      toast.error(d.error || "Failed to approve employee. Please try again.");
+    }
     setLoading(null);
   }
 

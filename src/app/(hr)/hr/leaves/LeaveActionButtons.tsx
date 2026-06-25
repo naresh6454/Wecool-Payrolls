@@ -32,7 +32,8 @@ export default function LeaveActionButtons({ leaveId }: { leaveId: string }) {
       setLopWarning(null);
       router.refresh();
     } else {
-      toast.error("Action failed");
+      const err = await res.json().catch(() => ({}));
+      toast.error(err.error || "Failed to approve leave. Please try again.");
     }
     setLoading(null);
   }
@@ -51,7 +52,10 @@ export default function LeaveActionButtons({ leaveId }: { leaveId: string }) {
       setRejectionReason("");
       setLopWarning(null);
       router.refresh();
-    } else toast.error("Action failed");
+    } else {
+      const err = await res.json().catch(() => ({}));
+      toast.error(err.error || "Failed to reject leave. Please try again.");
+    }
     setLoading(null);
   }
 

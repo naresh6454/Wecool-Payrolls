@@ -16,7 +16,10 @@ export default function OTActionButtons({ otId }: { otId: string }) {
       body: JSON.stringify({ status }),
     });
     if (res.ok) { toast.success(status === "APPROVED" ? "OT approved" : "OT rejected"); router.refresh(); }
-    else toast.error("Action failed");
+    else {
+      const err = await res.json().catch(() => ({}));
+      toast.error(err.error || `Failed to ${status === "APPROVED" ? "approve" : "reject"} OT. Please try again.`);
+    }
     setLoading(null);
   }
 
