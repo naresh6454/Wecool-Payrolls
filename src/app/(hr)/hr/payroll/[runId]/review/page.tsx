@@ -108,6 +108,23 @@ export default function PayrollReviewPage() {
     setSaving(null);
   };
 
+  const deleteAdjustment = async (recordId: string, adjId: string) => {
+    const res = await fetch(`/api/hr/payroll/records/${recordId}/adjustments`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ adjId }),
+    });
+    if (res.ok) {
+      setRun(prev => prev ? {
+        ...prev,
+        payrollRecords: prev.payrollRecords.map(r =>
+          r.id === recordId ? { ...r, manualAdjustments: r.manualAdjustments.filter(a => a.id !== adjId) } : r
+        ),
+      } : prev);
+      toast.success("Adjustment removed");
+    } else toast.error("Failed to remove");
+  };
+
   const saveEdit = async (recordId: string, fields: Record<string, string>, useLeaveBalance?: boolean) => {
     const body = {
       ...Object.fromEntries(Object.entries(fields).map(([k, v]) => [k, parseFloat(v) || 0])),
@@ -203,6 +220,7 @@ export default function PayrollReviewPage() {
               adj={adj}
               onAdjChange={val => setNewAdj(p => ({ ...p, [rec.id]: { ...adj, ...val } }))}
               onAddAdj={addAdjustment}
+              onDeleteAdj={deleteAdjustment}
               warehouseOt={ot}
               onOtChange={val => setWarehouseOt(p => ({ ...p, [rec.id]: { ...ot, ...val } }))}
               onSaveOt={saveWarehouseOt}

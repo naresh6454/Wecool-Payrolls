@@ -60,6 +60,7 @@ interface Props {
   adj: ManualAdjustment;
   onAdjChange: (val: Partial<ManualAdjustment>) => void;
   onAddAdj: (id: string) => void;
+  onDeleteAdj: (recordId: string, adjId: string) => void;
   warehouseOt: { days: string; rate: string };
   onOtChange: (val: { days?: string; rate?: string }) => void;
   onSaveOt: (id: string) => void;
@@ -70,7 +71,7 @@ const fmt = (n: number) => Number(n).toLocaleString("en-IN");
 
 export default function PayrollRecordCard({
   rec, isExpanded, onToggle, saving, onApprove,
-  adj, onAdjChange, onAddAdj,
+  adj, onAdjChange, onAddAdj, onDeleteAdj,
   warehouseOt: ot, onOtChange, onSaveOt, onSaveEdit,
 }: Props) {
   const isWarehouse = rec.employee.employeeType === "WAREHOUSE";
@@ -111,7 +112,9 @@ export default function PayrollRecordCard({
     (parseFloat(fields.specialAllowance) || 0) + (parseFloat(fields.overtimeAmount) || 0);
   const liveDed = (parseFloat(fields.professionalTax) || 0) + (parseFloat(fields.lopDeduction) || 0) +
     (parseFloat(fields.lateDeduction) || 0);
-  const liveNet = Math.max(0, liveGross - liveDed);
+  const adjDelta = rec.manualAdjustments.reduce((sum, a) => a.adjustmentType === "ADDITION" ? sum + Number(a.amount) : sum - Number(a.amount), 0);
+  const liveNet = Math.max(0, liveGross - liveDed + adjDelta);
+  const adjNet = Math.max(0, Number(rec.netSalary) + adjDelta);
 
   const startEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -238,7 +241,7 @@ export default function PayrollRecordCard({
             <div className="flex flex-wrap items-center gap-x-4 gap-y-0.5 mt-1 text-xs text-stone-400">
               <span>Gross: <b className="text-stone-700">₹{fmt(rec.grossEarnings)}</b></span>
               <span>Deductions: <b className="text-red-500">-₹{fmt(rec.totalDeductions)}</b></span>
-              <span>Net: <b className="text-green-600 text-sm">₹{fmt(rec.netSalary)}</b></span>
+              <span>Net: <b className="text-green-600 text-sm">₹{fmt(adjNet)}</b></span>
               {rec.manualAdjustments.length > 0 && (
                 <span className="text-orange-500">{rec.manualAdjustments.length} adj.</span>
               )}
@@ -392,7 +395,7 @@ export default function PayrollRecordCard({
                     )}
                     <div className="flex justify-between pt-1 border-t border-stone-100 font-bold">
                       <span className="text-green-700">Net Pay</span>
-                      <span className="text-green-600">₹{fmt(isEditing ? liveNet : rec.netSalary)}</span>
+                      <span className="text-green-600">₹{fmt(isEditing ? liveNet : adjNet)}</span>
                     </div>
                   </div>
                 </div>
@@ -436,7 +439,9 @@ export default function PayrollRecordCard({
                       <span className={`px-2 py-0.5 rounded text-xs font-semibold ${a.adjustmentType === "ADDITION" ? "bg-green-100 text-green-600" : "bg-red-100 text-red-500"}`}>
                         {a.adjustmentType === "ADDITION" ? "+" : "-"}₹{fmt(a.amount)}
                       </span>
-                      <span className="text-stone-500">{a.description}</span>
+                      <span className="text-stone-500 flex-1">{a.description}</span>
+                      <button onClick={() => onDeleteAdj(rec.id, a.id)}
+                        className="text-stone-300 hover:text-red-400 transition-colors text-xs font-bold px-1">✕</button>
                     </div>
                   ))}
                 </div>
