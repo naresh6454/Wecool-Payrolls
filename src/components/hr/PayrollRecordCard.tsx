@@ -329,7 +329,6 @@ export default function PayrollRecordCard({
                   <div className="space-y-1.5 text-sm">
                     {([
                       ["Prof Tax", rec.professionalTax, "professionalTax"],
-                      ["LOP Deduction", rec.lopDeduction, "lopDeduction"],
                       ["Late Deduction", rec.lateDeduction, "lateDeduction"],
                     ] as [string, number, keyof EditFields][]).map(([label, val, key]) => (
                       <div key={label} className="flex justify-between items-center">
@@ -339,6 +338,12 @@ export default function PayrollRecordCard({
                           : <span className="font-medium text-red-500">-₹{fmt(val)}</span>}
                       </div>
                     ))}
+                    <div className="flex justify-between items-center">
+                      <span className="text-stone-500">LOP Deduction</span>
+                      <span className="font-medium text-red-500">
+                        -₹{fmt(isEditing ? parseFloat(fields.lopDeduction) || 0 : rec.lopDeduction)}
+                      </span>
+                    </div>
                     <div className="pt-1 border-t border-stone-100 space-y-1">
                       {([
                         ["Present", rec.presentDays, "presentDays", "days"],
@@ -384,12 +389,11 @@ export default function PayrollRecordCard({
                         <div className="flex justify-between items-center text-xs">
                           <span className="font-semibold text-stone-500">Leave Balance</span>
                           <span className="font-bold text-blue-600">
-                            {availableBalance.toFixed(2)} days avail
+                            {availableBalance.toFixed(2)} days available
                           </span>
                         </div>
                         <div className="flex justify-between text-stone-400 text-xs mt-0.5">
                           <span>{Number(rec.paidLeaveDays ?? 0).toFixed(2)} used this month</span>
-                          <span>of {Number(rec.leaveBalance?.totalAllocated ?? 0).toFixed(2)} allocated</span>
                         </div>
                       </div>
                     )}
