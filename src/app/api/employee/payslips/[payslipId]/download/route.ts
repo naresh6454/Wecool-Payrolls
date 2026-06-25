@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server"; // NextResponse used for error responses
 import { requireAuth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { generatePayslipPDF } from "@/lib/pdf";
@@ -93,7 +93,8 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ pay
       leaveBalanceNow: Math.max(0, leaveBalanceNow),
     });
 
-    return new NextResponse(new Uint8Array(pdfBuffer), {
+    const blob = new Blob([new Uint8Array(pdfBuffer)], { type: "application/pdf" });
+    return new Response(blob, {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
