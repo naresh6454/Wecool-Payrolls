@@ -244,9 +244,6 @@ export function parseBiometricFormat(
       const date = dateByCol[col];
       if (!date) continue;
 
-      // Only include dates in the payroll month
-      if (date.getMonth() + 1 !== payrollMonth || date.getFullYear() !== payrollYear) continue;
-
       const cellVal = String(punchRow[col] || "").trim();
       if (!cellVal) {
         // Absent

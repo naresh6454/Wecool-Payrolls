@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
     });
 
     let payrollRunId: string | null = null;
-    if (uploadStatus === "VALID") {
+    if (uploadStatus === "VALID" && validRows.length > 0) {
       const empIds = [...new Set(validRows.map(r => r.employeeId))];
       await prisma.attendanceRecord.deleteMany({
         where: { employeeId: { in: empIds }, attendanceDate: { gte: periodStart, lte: periodEnd } },
