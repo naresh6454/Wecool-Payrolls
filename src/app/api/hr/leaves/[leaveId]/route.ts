@@ -3,7 +3,8 @@ import { requireAuth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createAuditLog } from "@/lib/audit";
 import { z } from "zod";
-import { eachDayOfInterval, parseISO } from "date-fns";
+import { eachDayOfInterval, parseISO, format } from "date-fns";
+import { sendLeaveResponseToEmployee } from "@/lib/email";
 
 const schema = z.discriminatedUnion("status", [
   z.object({ status: z.literal("APPROVED"), asLop: z.boolean().optional() }),
@@ -21,7 +22,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ le
 
     const leave = await prisma.leaveRequest.findUnique({
       where: { id: leaveId },
-      include: { employee: true },
+      include: { employee: { include: { user: { select: { email: true } } } } },
     });
     if (!leave) return NextResponse.json({ error: "Not found" }, { status: 404 });
     if (leave.status !== "PENDING") return NextResponse.json({ error: "Leave is already reviewed" }, { status: 400 });
@@ -109,6 +110,16 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ le
         description: `HR approved ${leaveDays} day(s) ${leave.leaveType} leave for ${leave.employee.firstName} ${leave.employee.lastName}${isLopType ? " (as LOP)" : ""}`,
       });
 
+      sendLeaveResponseToEmployee({
+        employeeEmail: leave.employee.user.email,
+        employeeName: `${leave.employee.firstName} ${leave.employee.lastName}`.trim(),
+        leaveType: leave.leaveType,
+        fromDate: format(leave.fromDate, "MMM d, yyyy"),
+        toDate: format(leave.toDate, "MMM d, yyyy"),
+        totalDays: leaveDays,
+        status: "APPROVED",
+      }).catch(console.error);
+
     } else {
       // REJECTED
       await prisma.leaveRequest.update({
@@ -130,6 +141,17 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ le
         entityType: "leave_request", entityId: leaveId,
         description: `HR rejected leave for ${leave.employee.firstName} ${leave.employee.lastName}. Reason: ${reason}`,
       });
+
+      sendLeaveResponseToEmployee({
+        employeeEmail: leave.employee.user.email,
+        employeeName: `${leave.employee.firstName} ${leave.employee.lastName}`.trim(),
+        leaveType: leave.leaveType,
+        fromDate: format(leave.fromDate, "MMM d, yyyy"),
+        toDate: format(leave.toDate, "MMM d, yyyy"),
+        totalDays: leaveDays,
+        status: "REJECTED",
+        reason,
+      }).catch(console.error);
     }
 
     return NextResponse.json({ success: true });

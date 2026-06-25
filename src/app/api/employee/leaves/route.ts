@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
-import { differenceInCalendarDays } from "date-fns";
+import { differenceInCalendarDays, format } from "date-fns";
+import { sendLeaveRequestToHR } from "@/lib/email";
 
 const schema = z.object({
   leaveType: z.enum(["CASUAL", "SICK", "MEDICAL", "LOP"]),
@@ -65,7 +66,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Notify HR
+    // Notify HR (in-app)
     const hrUsers = await prisma.user.findMany({ where: { role: "HR" } });
     for (const hr of hrUsers) {
       await prisma.notification.create({
@@ -77,6 +78,17 @@ export async function POST(req: NextRequest) {
         },
       });
     }
+
+    // Send email to HR
+    sendLeaveRequestToHR({
+      employeeName: `${employee.firstName} ${employee.lastName}`.trim(),
+      employeeCode: employee.employeeCode,
+      leaveType: data.leaveType,
+      fromDate: format(from, "MMM d, yyyy"),
+      toDate: format(to, "MMM d, yyyy"),
+      totalDays,
+      reason: data.reason,
+    }).catch(console.error);
 
     return NextResponse.json(leave);
   } catch (err: unknown) {
