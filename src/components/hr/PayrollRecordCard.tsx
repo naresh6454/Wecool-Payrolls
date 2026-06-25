@@ -124,9 +124,10 @@ export default function PayrollRecordCard({
 
   const handleSaveClick = async () => {
     const newLop = parseFloat(fields.lopDays) || 0;
+    const originalLop = Number(rec.lopDays) + Number(rec.paidLeaveDays);
 
-    // If there are LOP days and leave balance is available → show dialog
-    if (newLop > 0 && availableBalance > 0) {
+    // Only show dialog if HR increased LOP days and leave balance is available
+    if (newLop > originalLop && availableBalance > 0) {
       setPendingFields(fields);
       setShowLeaveDialog(true);
       return;
