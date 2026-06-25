@@ -385,7 +385,7 @@ export default function PayrollRecordCard({
                           </span>
                         </div>
                         <div className="flex justify-between text-stone-400 text-xs mt-0.5">
-                          <span>{Number(rec.leaveBalance?.used ?? 0).toFixed(2)} used</span>
+                          <span>{Number(rec.paidLeaveDays ?? 0).toFixed(2)} used this month</span>
                           <span>of {Number(rec.leaveBalance?.totalAllocated ?? 0).toFixed(2)} allocated</span>
                         </div>
                       </div>
