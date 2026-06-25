@@ -440,7 +440,7 @@ export default function PayrollRecordCard({
                         {a.adjustmentType === "ADDITION" ? "+" : "-"}₹{fmt(a.amount)}
                       </span>
                       <span className="text-stone-500 flex-1">{a.description}</span>
-                      <button onClick={() => onDeleteAdj(rec.id, a.id)}
+                      <button onClick={() => a.id && onDeleteAdj(rec.id, a.id)}
                         className="text-stone-300 hover:text-red-400 transition-colors text-xs font-bold px-1">✕</button>
                     </div>
                   ))}
