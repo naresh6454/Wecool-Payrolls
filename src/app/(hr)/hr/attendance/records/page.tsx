@@ -101,7 +101,7 @@ export default async function AttendanceRecordsPage() {
                     <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-0.5 text-xs text-stone-500">
                       <span>{format(new Date(r.attendanceDate), "MMM d, yyyy")}</span>
                       {r.checkIn && <span>{r.checkIn} – {r.checkOut || "?"}</span>}
-                      {r.workingHours ? <span>{Number(r.workingHours)}h</span> : null}
+                      {r.workingHours ? <span>{Number(r.workingHours).toFixed(2)} hrs</span> : null}
                       {r.isLate && <span className="text-amber-600 font-semibold">+{r.lateMinutes}m late</span>}
                     </div>
                   </div>
@@ -130,7 +130,7 @@ export default async function AttendanceRecordsPage() {
                       <td className="px-6 py-3 text-stone-600">{format(new Date(r.attendanceDate), "MMM d, yyyy")}</td>
                       <td className="px-6 py-3 text-stone-600">{r.checkIn || "—"}</td>
                       <td className="px-6 py-3 text-stone-600">{r.checkOut || "—"}</td>
-                      <td className="px-6 py-3 text-stone-600">{r.workingHours ? `${Number(r.workingHours)}h` : "—"}</td>
+                      <td className="px-6 py-3 text-stone-600">{r.workingHours ? `${Number(r.workingHours).toFixed(2)} hrs` : "—"}</td>
                       <td className="px-6 py-3"><Badge variant={statusVariant(r.status)} size="sm">{r.status}</Badge></td>
                       <td className="px-6 py-3">
                         {r.isLate ? <span className="text-xs text-amber-600 font-semibold">+{r.lateMinutes}m late</span> : <span className="text-xs text-stone-300">—</span>}
