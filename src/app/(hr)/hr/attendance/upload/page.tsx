@@ -51,28 +51,6 @@ export default async function AttendanceUploadPage() {
         </Card>
       </div>
 
-      {/* Excel Format Guide */}
-      <Card className="mt-6">
-        <CardHeader title="Expected Excel Format" subtitle="Your attendance file must have these columns" />
-        <CardBody>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[
-              { col: "employee_id", type: "Text", eg: "EMP-001, WH-018" },
-              { col: "employee_name", type: "Text", eg: "Sneha Pillai" },
-              { col: "date", type: "Date", eg: "2025-06-01, 01-06-2025" },
-              { col: "check_in", type: "Time", eg: "09:15, 09:00" },
-              { col: "check_out", type: "Time", eg: "18:30, 18:00" },
-              { col: "status", type: "Text", eg: "PRESENT, ABSENT, HALF_DAY" },
-            ].map(f => (
-              <div key={f.col} className="bg-stone-50 rounded-xl p-3 border border-stone-100">
-                <code className="text-xs font-bold text-orange-600">{f.col}</code>
-                <p className="text-xs text-stone-500 mt-1">{f.type}</p>
-                <p className="text-xs text-stone-400 mt-0.5">e.g. {f.eg}</p>
-              </div>
-            ))}
-          </div>
-        </CardBody>
-      </Card>
     </div>
   );
 }
