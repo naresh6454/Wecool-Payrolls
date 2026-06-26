@@ -29,7 +29,7 @@ async function getSettings() {
 const toUTCKey = (d: Date) =>
   `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(d.getUTCDate()).padStart(2, "0")}`;
 
-export async function runPayrollProcessing(uploadId: string, initiatorId: string) {
+export async function runPayrollProcessing(uploadId: string, initiatorId: string, accrueLeave = false) {
   const upload = await prisma.attendanceUpload.findUnique({ where: { id: uploadId } });
   if (!upload) throw new Error("Upload not found");
 
@@ -42,7 +42,6 @@ export async function runPayrollProcessing(uploadId: string, initiatorId: string
   const calendarMap = new Map(calendarEntries.map(e => [toUTCKey(e.date), e.status]));
 
   let payrollRun = await prisma.payrollRun.findFirst({ where: { payrollMonth: upload.payrollMonth } });
-  const isFirstRun = !payrollRun;
   if (!payrollRun) {
     payrollRun = await prisma.payrollRun.create({
       data: {
@@ -58,7 +57,7 @@ export async function runPayrollProcessing(uploadId: string, initiatorId: string
   }
 
   // Fix N+1: batch fetch all leave balances for draft records at once
-  if (!isFirstRun) {
+  if (!accrueLeave) {
     const draftRecords = await prisma.payrollRecord.findMany({
       where: { payrollRunId: payrollRun.id, status: "DRAFT" },
       select: { employeeId: true, paidLeaveDays: true },
@@ -121,8 +120,8 @@ export async function runPayrollProcessing(uploadId: string, initiatorId: string
   });
   const leaveBalanceMap = new Map(allLeaveBalances.map(lb => [lb.employeeId, lb]));
 
-  // If first run: accrue 1.33 days for all employees in one batch
-  if (isFirstRun) {
+  // Accrue 1.33 days only on the first upload for this payroll month
+  if (accrueLeave) {
     const existingEmpIds = new Set(allLeaveBalances.map(lb => lb.employeeId));
     const toUpdate = activeEmployeeIds.filter(id => existingEmpIds.has(id));
     const toCreate = activeEmployeeIds.filter(id => !existingEmpIds.has(id));

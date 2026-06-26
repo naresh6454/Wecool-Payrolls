@@ -109,6 +109,7 @@ export async function POST(req: NextRequest) {
         where: { payrollMonth: payrollMonthStr },
         select: { id: true, periodEnd: true },
       });
+      const isNewMonth = !existingRun; // checked before deleting — true only on first upload for this month
       if (existingRun) {
         const oldRecords = await prisma.payrollRecord.findMany({
           where: { payrollRunId: existingRun.id },
@@ -136,7 +137,7 @@ export async function POST(req: NextRequest) {
       }
 
       try {
-        const result = await runPayrollProcessing(upload.id, session.userId);
+        const result = await runPayrollProcessing(upload.id, session.userId, isNewMonth);
         payrollRunId = result.payrollRunId;
       } catch (processErr) {
         console.error("Auto-process failed:", processErr);
