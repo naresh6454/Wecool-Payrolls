@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import PageHeader from "@/components/layout/PageHeader";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { format } from "date-fns";
-import { FileText, Download, Mail, FileSpreadsheet } from "lucide-react";
+import { FileText, Download, Mail } from "lucide-react";
 import Badge from "@/components/ui/Badge";
 
 export default async function PayslipsPage() {
@@ -20,7 +20,6 @@ export default async function PayslipsPage() {
           payrollMonth: true,
           periodStart: true,
           periodEnd: true,
-          upload: { select: { fileName: true } },
         },
       },
     },
@@ -84,34 +83,6 @@ export default async function PayslipsPage() {
             </div>
           </Card>
 
-          {/* Attendance Section */}
-          <Card>
-            <CardHeader title="Attendance Sheets" />
-            <div className="divide-y divide-stone-50">
-              {payslips.map((ps) => (
-                ps.payrollRunRel.upload && (
-                  <div key={ps.id} className="flex flex-wrap items-center gap-3 px-4 sm:px-6 py-4 hover:bg-stone-50 transition-all">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-blue-100 flex items-center justify-center flex-shrink-0">
-                      <FileSpreadsheet className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm sm:text-base font-bold text-stone-900">{ps.payrollRunRel.payrollMonth}</p>
-                      <p className="text-xs text-stone-400">
-                        {format(new Date(ps.payrollRunRel.periodStart), "MMM d")} – {format(new Date(ps.payrollRunRel.periodEnd), "MMM d, yyyy")}
-                      </p>
-                    </div>
-                    <a
-                      href={`/api/employee/attendance/${ps.payrollRunRel.id}/download`}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-semibold rounded-lg hover:bg-blue-100 transition-all"
-                    >
-                      <Download className="w-3.5 h-3.5" />
-                      Download
-                    </a>
-                  </div>
-                )
-              ))}
-            </div>
-          </Card>
         </>
       )}
     </div>
