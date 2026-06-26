@@ -124,7 +124,7 @@ export async function POST(req: NextRequest) {
             await prisma.leaveBalance.update({
               where: { id: lb.id },
               data: {
-                totalAllocated: Math.max(0, Number(lb.totalAllocated) - 1.33),
+                // Only undo LOP coverage — accrual (totalAllocated) stays permanently
                 used: Math.max(0, Number(lb.used) - Number(rec.paidLeaveDays)),
               },
             });
